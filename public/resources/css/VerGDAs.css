@@ -1,0 +1,80 @@
+.lider{
+    border-radius: 50%;
+    color: whitesmoke;
+    font-size: 18px;
+    border: solid 5px whitesmoke;
+    background-color: #eed;
+    box-shadow: 5px -5px rgba(80,10,140,0.09);
+    -moz-box-shadow: 5px -5px rgba(80,10,140,0.09);
+    -webkit-box-shadow: 5px -5px rgba(80,10,140,0.09);
+    -o-box-shadow: 5px -5px  rgba(80,10,140,0.09);
+}
+
+.lider-edit{
+    background: linear-gradient(to bottom, rgb(25,135,84) 50%, rgb(220,53,69) 50%);
+    border-radius: 50%;
+    color: whitesmoke;
+    font-size: 18px;
+    border: solid 5px whitesmoke;
+    box-shadow: 10px -10px rgba(12, 2, 20, 0.09);
+    -webkit-box-shadow: 10px -10px rgba(12, 2, 20, 0.09);
+    -moz-box-shadow: 10px -10px rgba(12, 2, 20, 0.09);
+}
+
+.lider:hover, .lider-edit:hover{
+    background-color: coral;
+    cursor: pointer;
+    transition: 0.25s;
+    color: whitesmoke;
+}
+
+.lider:click, .lider-edit:click{
+    background-color: coral;
+    cursor: pointer;
+    transition: 0.25s;
+    color: whitesmoke;
+}
+
+.lider:focus, .lider-edit:focus{
+    background-color: coral;
+    cursor: pointer;
+    transition: 0.25s;
+    color: whitesmoke;
+}
+
+.hombre{
+    background-color: #2432BF;
+}
+
+.mujer{
+    background-color: #F723B6;
+}
+
+.texto-lider-gda{
+    color:rgb(245, 252, 212);
+}
+
+.parent {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 118px;
+    width: 122px;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+}
+
+.div-buttonsVerGda{
+    width: 118px;
+    height: 122px;
+}
+
+.alineacion{
+    text-align: -webkit-center;
+    text-align: -moz-center
+}
+
+.info-verGDA{
+    font-size: 16px;
+    color:rgb(245, 252, 212)
+}

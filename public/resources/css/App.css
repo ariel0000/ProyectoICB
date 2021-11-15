@@ -1,0 +1,197 @@
+h1 {
+    color: teal;
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    list-style: none;
+}
+
+.toolbar{
+    text-align: center;
+    margin-bottom:5px;
+}
+
+.icono-perfil{
+    text-align: end;
+}
+
+.div-principal {
+    padding: 15px;
+    background-color: #0099cc;
+}
+
+.menu {
+    background-color:#33b5e5;
+    padding: 0px;
+    transition: 2s;
+}
+
+.menu nav{
+    display: block;
+}
+
+.menu li{
+    border-bottom: 2px solid;
+    border-bottom-color: coral;
+    align-items: center;
+}
+
+.submenu a:hover {
+    background-color: coral;
+}
+
+.submenu a:focus{
+    background-color: coral;
+}
+
+.menu a {
+    color: whitesmoke;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+/*
+.menu a:hover {
+    color: rgb(245, 212, 212);
+    transition: 1s;
+} */
+
+.magia {
+    height: 50px;
+    transition: 2s;
+    background-color: #0099cc;
+}
+
+.magia .pato {
+    opacity: 0;
+    transition: 2s;
+    transition-delay: 1s;
+}
+
+.pato{
+    height: 1px;
+    transition: 3s;
+}
+
+.pato .submenu {
+    height: 0px;
+    transition: 2s;
+}
+
+.pato a{
+    display: none;
+}
+
+.submenu {
+    margin: 0px;
+    padding: 0px;
+    display: block;
+    background-color: coral;
+    text-align: center;
+}
+
+.submenu a {
+    color: whitesmoke;
+    font-size: 20px;
+    padding: 10px;
+    text-align: center;
+}
+
+.submenu a:click{
+    background-color: crimson;
+    cursor: pointer;
+    transition: 2s;
+}
+
+.submenu a:hover{
+    background-color: crimson;
+    cursor: pointer;
+    transition: 1s;
+}
+
+.imagen-icono{
+    max-width: 65px;
+    height: 65px;
+}
+
+.mainApp{
+    text-align: center;
+}
+
+.noticias{
+    margin-top: 10px;
+}
+
+.infoApp{
+    margin-top: 10px;
+    color:rgb(245, 252, 212);
+    padding: 0px;  /* Con el breakppoint en 'VerGDAs' se aumenta el padding para pantallas más grandes que 'sm' */
+}
+
+.header {
+    color: #36A0FF;
+    font-size: 27px;
+    padding: 10px;
+}
+
+.bigicon {
+    font-size: 35px;
+    color: #36A0FF;
+}
+
+.boton{ /* Para poner el ancho de todos los botones iguales (Ver Componente "Crear GDA") */
+    width: 75px;
+}
+
+
+/* Para Componente "Modal": AgregarPersona */
+.AgregarPersona{  /* Esto es solo una capa gris que va debajo del componente modal */
+    position: fixed;
+    background-color: rgba(0,0,0,0.5);
+    top: 0;
+    right: 0;
+    left: 0;
+    height: auto;
+    z-index: 999999;
+    overflow: auto;
+    bottom: 0;
+}
+
+html.modal-mode{  /* Para el componente Modal: Hace desaparecer el scroll en los componentes debajo del modal*/
+    overflow-y: hidden;
+}
+    
+.AgregarPersona .persona-detail{
+    position: relative;
+    top: 10%;
+    margin: auto;
+    width: 80%;
+    max-width: 960px;
+    background-color: #0099cc;
+}
+/* ------------------ */
+
+/* Ejemplo de clases para componentes de transición. (No está en uso) */
+.example-enter{
+    opacity: 0.01;
+}
+
+.example-enter-active{
+    opacity: 1;
+    transition: opacity 2000ms ease-in
+}
+
+.example-appear{
+    opacity: 0.02;
+}
+
+.example-appear-active{
+    opacity: 1;
+    transition: opacity 4000ms ease-in
+}
+/* ------------------- */
