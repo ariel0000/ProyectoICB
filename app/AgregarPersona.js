@@ -64,36 +64,51 @@ class AgregarPersona extends React.Component{
                             <h6>{this.props.accion}</h6>
                         </blockquote>
                     </div>
-                    <div className="col-12 col-md-8 mt-2 justify-content-center align-items-center">
-                        <blockquote className="text-center">
-                            <h6 id="errorCamp"></h6>
-                        </blockquote>
+                    <div className="row align-items-center justify-content-center">
+                        <div className="col-12 col-md-8 mt-2 successLabel">
+                            <blockquote className="text-center">
+                                <h6>{this.props.successLabel}</h6>
+                            </blockquote>
+                        </div>
                     </div>
-                    <div className="col-auto m-2 mb-4">
-                        <input type="text" className="form-control" placeholder="Ingrese nombre de la persona" onChange={this.handleChange.bind(this)} />
+                    <div className="row align-items-center justify-content-center">
+                        <div className="col-12 col-md-8 mt-2 justify-content-center align-items-center">
+                            <blockquote className="text-center">
+                                <h6 id="errorCamp">{this.props.errorLabel}</h6>
+                            </blockquote>
+                        </div>
                     </div>
-                    <div className="col-auto m-1">
+                    <div className="row align-items-center justify-content-center">
+                        <div className="col-7 m-2 mb-4">
+                            <input type="text" className="form-control" placeholder="Ingrese nombre" onChange={this.handleChange.bind(this)} />
+                        </div>
+                    </div>
+                    <div className="row align-items-center justify-content-center">
+                        <div className="col-auto m-1">
                             <For each="persona" index="index" of={this.state.personasFiltradas}>
                                 <button className="btn btn-success me-1" aria-current="true" key={persona.id} 
                                 onClick={() => {this.handleSelect(persona.id) }}>
                                     {persona.nombre}&nbsp;{persona.apellido}
                                 </button>
                             </For>
+                        </div>
                     </div>
-                    <div className="col-auto m-2">
-                        <button className="btn btn-secondary" onClick={this.handleClose.bind(this)} >
-                            Cerrar
-                        </button>
+                    <div className="row align-items-center justify-content-center">
+                        <div className="col-auto m-2">
+                            <button className="btn btn-secondary" onClick={this.handleClose.bind(this)} >
+                                Cerrar
+                            </button>
+                        </div>
+                        {this.state.personaSeleccionada?
+                        <div className="col-auto m-2">
+                            <button className="btn btn-info text-white mb-2" onClick={()=> {this.props.addPer(this.state.personaSeleccionada)}} >
+                                Agregar Persona
+                            </button>
+                        </div>
+                        :
+                        <span></span>
+                        }
                     </div>
-                    {this.state.personaSeleccionada?
-                    <div className="col-auto m-2">
-                        <button className="btn btn-info text-white mb-2" onClick={()=> {this.props.addPer(this.state.personaSeleccionada)}} >
-                            Agregar Persona
-                        </button>
-                    </div>
-                    :
-                    <span></span>
-                    }
                 </div>
             </div>
         )

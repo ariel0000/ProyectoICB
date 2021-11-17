@@ -12,7 +12,8 @@ class VerGda extends React.Component {
         this.state = {
             idGda: this.props.params.gda,
             gda: null,
-            error: ""
+            error: "",
+            success: ""
         }
     }
 
@@ -46,29 +47,34 @@ class VerGda extends React.Component {
             if(response.body.gda){  //Si es distinto de null --> Tengo que ver si es igual al "gda" que estoy modificando
                 if(response.body.gda.id == parseInt(this.state.idGda)){ 
                     //Si tiene el mismo id --> Estoy agregando una persona que ya está en el gda
-                    document.getElementById('errorField').innerText = "La persona que intenta agregar ya está en este GDA"
+                    let newState = update(this.state, {error:{$set: "La persona ya está en el gda"}})
+                    this.setState(newState)
                 }
                 else{ /* Si la persona tiene gda pero no es igual al que estoy editando tengo que avisarle al usuario */
                     var r = confirm(response.body.nombre+" está en el GDA de: "+response.body.gda.lider.nombre+
                     ", ¿Desea cambiarlo al GDA de "+this.state.gda.lider.nombre)
                     if(r === true){
                         this.actualizarPersonaEnGda(this.state.gda.id, response.body)
-                        newState = update(this.state, {gda: {participantes: {$push: [response.body]}}}); //Agrego la persona a participantes
+                        newState = update(this.state, {gda: {participantes: {$push: [response.body]}},
+                        error: {$set: ""}}); //Agrego la persona a participantes
                         this.setState(newState)
                     }
                     else{
-                        //No se actualiza la persona
+                        let newState = update(this.state, {error:{$set: ""}})
+                        this.setState(newState)
                     }
                 }
             }
             else{  /* Si el usuario tiene gda nulo --> puedo asignarlo sin problemas */
                 this.actualizarPersonaEnGda(this.state.gda.id, response.body)
-                newState = update(this.state, {gda: {participantes: {$push: [response.body]}}}); //Agrego la persona a participantes
+                newState = update(this.state, {gda: {participantes: {$push: [response.body]}},
+                error: {$set: ""}}); //Agrego la persona a participantes
                 this.setState(newState)
             }
         },
         error => {
-            document.getElementById("errorField").innerText = "Error: "+error.message;
+            let newState = update(this.state, {error:{$set: "Error: "+error.message}})
+            this.setState(newState)
         })
     }
 
@@ -88,11 +94,12 @@ class VerGda extends React.Component {
     actualizarPersonaEnGda(idGda, request){
         let params = this.armarParametros(idGda, request)
         APIInvoker.invokePUT('/icb-api/v1/persona', params, response => {
-            alert("GDA Actualizado")
-            document.getElementById("errorField").innerText = ""
+            let newState = update(this.state, {error:{$set: ""}, success: {$set: "GDA Actualizado"}})
+            this.setState(newState)
         },
         error => {
-            document.getElementById("errorField").innerText = "Error: "+error.message
+            let newState = update(this.state, {error:{$set: "Error: "+error.message}})
+            this.setState(newState)
         })
     }
 
@@ -154,7 +161,7 @@ class VerGda extends React.Component {
                 persona = per
             }
         });
-        var r = confirm("¿Está seguro que desea quitar del GDA a: "+value)
+        var r = confirm("¿Está seguro que desea quitar a: "+value+" del GDA")
         if(r === true & persona != null){
             this.actualizarPersonaEnGda(null, persona)  //Paso el parámetro idGda en null
             let i = this.findIndexOfParticipante(idPer)
@@ -179,7 +186,7 @@ class VerGda extends React.Component {
         }
 
         let childs = this.props.children && React.cloneElement(this.props.children, {addPer: this.AgregarPersona.bind(this),
-        accion: "Agregar Persona a GDA"});
+        accion: "Agregar Persona a GDA", errorLabel: this.state.error, successLabel: this.state.success});
         
         return (
             <IconContext.Provider value={{size: "1.5em"}} >

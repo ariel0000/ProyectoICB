@@ -17,6 +17,7 @@ import VerGDAs from './VerGDAs'
 import Error404 from './Error404'
 import VerGda from './VerGda'
 import AgregarNuevaPersona from './AgregarPersona'
+import Modal from './Modal'
 
 var createBrowserHistory = require('history/createBrowserHistory')
 
@@ -36,7 +37,7 @@ render((
                 <Route path="crearGda" component={CrearGDA} tab="crearGda" />
                 <Route path="verGDAs"  component={VerGDAs} tab="verGDAs" >
                     <Route path=":gda" component={VerGda} tab="verGDA" >
-                        <Route path="addOne" component={AgregarNuevaPersona} tab="verGDA" />
+                        <Route path="addOne" component={(params) => <Modal><AgregarNuevaPersona {...params}/> </Modal>} tab="addOne" />
                     </Route>
                 </Route>
                 <Route path="signup" component={Signup} />

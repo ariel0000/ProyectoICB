@@ -170,9 +170,18 @@ html.modal-mode{  /* Para el componente Modal: Hace desaparecer el scroll en los
     position: relative;
     top: 10%;
     margin: auto;
-    width: 80%;
-    max-width: 960px;
+    width: 90%;
+    max-width: 560px;
     background-color: #0099cc;
+}
+
+.AgregarPersona input{
+    width: 245x;
+}
+
+.sucessLabel{
+    opacity: 1;
+    transition: 2s;
 }
 /* ------------------ */
 
