@@ -12,6 +12,26 @@ class AgregarPersona extends React.Component{
             filtroNombre: "",
             personasFiltradas: []
         }
+        this.setWrapperRef = this.setWrapperRef.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+    }
+
+    componentDidMount(){
+        document.addEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside(event){
+        //Cuando click fuero de la parte del Modal visible
+        console.log("Click Juera")
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)){ //Click afuera
+            document.removeEventListener('mousedown', this.handleClickOutside);
+            document.body.classList.remove('modal-mode');
+            browserHistory.goBack(-1)
+        }
     }
 
     handleChange(e){
@@ -45,9 +65,14 @@ class AgregarPersona extends React.Component{
     }
 
     handleClose(e){
+        document.removeEventListener('mousedown', this.handleClickOutside);
         document.body.classList.remove('modal-mode');
         browserHistory.goBack(-1)   //El -1 nosepaqe
     }    
+
+    componentWillUnmount(){
+        document.removeEventListener('mousedown', this.handleClickOutside );
+    }
 
     handleSelect(idPer){
         //Función que se encarga de actualizar el estado con la persona seleccionada
@@ -57,8 +82,8 @@ class AgregarPersona extends React.Component{
 
     render(){
         return(
-            <div className="AgregarPersona">
-                <div className="persona-detail infoApp container-fluid">
+            <div className="AgregarPersona" >
+                <div className="persona-detail infoApp container-fluid" ref={this.setWrapperRef.bind(this)}>
                     <div className="d-block p-2">
                         <blockquote className="text-center">
                             <h6>{this.props.accion}</h6>
@@ -71,7 +96,7 @@ class AgregarPersona extends React.Component{
                             </blockquote>
                         </div>
                     </div>
-                    <div className="row align-items-center justify-content-center">
+                    <div className="row align-items-center justify-content-center" >
                         <div className="col-12 col-md-8 mt-2 justify-content-center align-items-center">
                             <blockquote className="text-center">
                                 <h6 id="errorCamp">{this.props.errorLabel}</h6>
@@ -83,7 +108,7 @@ class AgregarPersona extends React.Component{
                             <input type="text" className="form-control" placeholder="Ingrese nombre" onChange={this.handleChange.bind(this)} />
                         </div>
                     </div>
-                    <div className="row align-items-center justify-content-center">
+                    <div className="row align-items-center justify-content-center" >
                         <div className="col-auto m-1">
                             <For each="persona" index="index" of={this.state.personasFiltradas}>
                                 <button className="btn btn-success me-1" aria-current="true" key={persona.id} 
@@ -93,7 +118,7 @@ class AgregarPersona extends React.Component{
                             </For>
                         </div>
                     </div>
-                    <div className="row align-items-center justify-content-center">
+                    <div className="row align-items-center justify-content-center" >
                         <div className="col-auto m-2">
                             <button className="btn btn-secondary" onClick={this.handleClose.bind(this)} >
                                 Cerrar

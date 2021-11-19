@@ -57,6 +57,7 @@ class VerGDAs extends React.Component {
     }
 
     handleClickGDA(e) {
+        document.getElementById('errorField').innerText = ""
         let gdaId = e.target.parentElement.title
         function getByValue(gdas, value) {
             for (var i = 0, iLen = gdas.length; i < iLen; i++) {
@@ -79,9 +80,42 @@ class VerGDAs extends React.Component {
         browserHistory.push('/MainApp/VerGDAs/' + idGda)
     }
 
+    encontrarGdaEnArray(idGda){
+        let indice, index = 0
+        let size = this.state.gdas.length
+        while(index < size){
+            
+            if(this.state.gdas[index].id == idGda){
+                indice = index
+                break;
+            }
+            index++;
+        }
+        return indice;
+    }
+
     handleBorrarGDA(e) {
-        e.preventDefault()
-        //Consultar si se desea borrar el GDA
+        e.stopPropagation();
+        
+        let idGda = e.target.parentElement.parentElement.title
+        let indice = this.encontrarGdaEnArray(idGda)
+        console.log('Indice: '+indice+" idGda: "+idGda)
+        let gda = this.state.gdas[indice]
+        var r = confirm("¿Desea borrar el GDA de "+gda.lider.nombre+" ?")
+        if(r === true){
+            if(gda.participantes.length > 0) {  //No se puede borrar un gda con participantes
+                document.getElementById('errorField').innerText = 'El GDA tiene participantes y no se puede borrar. Entre en \'Ver Info\' para quitarlos'
+            }
+            else{  //El GDA no tiene participantes -> Se puede borrar
+                APIInvoker.invokeDELETE('/icb-api/v1/gda/'+idGda, response => {
+                    let newState = update(this.state, {gdas: {$splice: [[indice, 1]]}}) //Borro el elemento
+                    this.setState(newState)
+                },
+                error => {
+                    document.getElelemtById('errorField').innerText = 'Error:'+error.message;
+                })
+            }
+        }
     }
 
     render() {
@@ -105,6 +139,10 @@ class VerGDAs extends React.Component {
                             <h6 className="text-white">
                                 Los distintos grupos de GDA están representados por sus líderes. Haga click en el Líder para ver información detallada.
                             </h6>
+                        </blockquote>
+                        <br/>
+                        <blockquote className="text-center">
+                            <h6 className="text-white" id="errorField"></h6>
                         </blockquote>
                         <div className="row justify-content-center m-1" >
                             <For each="gda" index="index" of={gdas} >
