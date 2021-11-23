@@ -31,6 +31,8 @@ class VerGDAs extends React.Component {
             error => {
                 if (error.status == 401) {
                     alert("Debe iniciar sesión para poder entrar aquí")
+                    window.localStorage.removeItem("token")
+                    window.localStorage.removeItem("codigo")
                     browserHistory.push("/MainApp")
                     console.log('Error, no hay usuario autenticado')
                 }

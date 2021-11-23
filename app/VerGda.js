@@ -23,16 +23,16 @@ class VerGda extends React.Component {
             newState = update(this.state, { gda: { $set: response.body } })   //En el body está el GDA
             this.setState(newState)
         },
-            error => {
-                if (error.status == 401) {
-                    alert("Debe iniciar sesión para poder entrar aquí")
-                    browserHistory.push("/MainApp")
-                    console.log('Error, no hay usuario autenticado')
-                }
-                else {
-                    document.getElementById("errorField").innerText = "Error: " + error.message
-                }
-            })
+        error => {
+            if (error.status == 401) {
+                alert("Debe iniciar sesión para poder entrar aquí")
+                browserHistory.push("/MainApp")
+                console.log('Error, no hay usuario autenticado')
+            }
+            else {
+                document.getElementById("errorField").innerText = "Error: " + error.message
+            }
+        })
     }
 
     VerTodos() {

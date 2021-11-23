@@ -141,6 +141,7 @@ class Menu extends React.Component{
 
     render(){
         const rol = this.props.perfil.rol.nivel
+        const gda = this.props.perfil.gda
         const nombre = this.props.perfil.nombre
         return(
             <IconContext.Provider value={{size: "1.5em"}} >
@@ -205,17 +206,28 @@ class Menu extends React.Component{
                         enlace="/MainApp/infoReu" />
                     </li>
 
-                    {(rol > 0)?
+                    {(rol > 0)? //Si estoy logueado
                         <li className={this.state.mostrarMenu ? "" : "pato"}>
                             <a className="nav-link" href="#" onClick={this.desplegarGda.bind(this)}>GDA</a>
-                            {(rol > 1)?
+                            {(rol > 2)?  //Administrador. Solo un Admin puede estar en Crear GDA
                                 <Submenu item="Crear GDA" active={this.state.gda} cerrarMenu={this.cerrarMenu.bind(this)}
                                 enlace="/MainApp/crearGda" />
                                 :
-                                <div></div>
+                                <div>
+                                </div>
                             }
+                            {(rol > 2)?  //Está logueado pero - Solo un administrador puede estar en VerGDA's
                             <Submenu item="Ver GDA's" active={this.state.gda} cerrarMenu={this.cerrarMenu.bind(this)}
                             enlace="/MainApp/verGDAs" />
+                            :
+                            <div></div>
+                            }
+                            {(gda)?  //Tiene gda asignado. Sino, no se muestra el submenu
+                                <Submenu item="Mi GDA" active={this.state.gda} cerrarMenu={this.cerrarMenu.bind(this)}
+                                enlace={"/MainApp/MiGda/"+gda.id} />
+                                :
+                                <div></div>
+                            }
                             <Submenu item="Información" active={this.state.gda} cerrarMenu={this.cerrarMenu.bind(this)}
                             enlace="/MainApp/infoGDA" />
                         </li>
@@ -261,6 +273,9 @@ Menu.propTypes = {
 
 Menu.defaultProps = {
     perfil: {
+        gda: {
+            id: 0
+        },
         rol: {
             id: 0,  //Usuario sin loguearse por defecto
             nivel: 0    

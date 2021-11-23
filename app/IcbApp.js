@@ -10,7 +10,7 @@ class IcbApp extends React.Component {
     constructor() {
         super(...arguments)
         this.state = {
-            usuario: null   //Tendría el perfil del usuario que luego se pasa como prop al componete Menú
+            profile: null
         }
     }
 
@@ -45,7 +45,7 @@ class IcbApp extends React.Component {
 
     render() {
      //   let menu = this.state.menu
-      //  let childs = this.props.children && React.cloneElement(this.props.children, {menuVisible: menu})
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.state.profile})
         let esCelu = false
         if (window.innerWidth < 577) {
             esCelu = true
@@ -56,7 +56,7 @@ class IcbApp extends React.Component {
 
                 <div className="row gx-0">  {/* En la misma 'row' tengo al Menú y al MainApp */}
                     <Menu esCelu={esCelu} perfil={this.state.profile} />
-                    {this.props.children}
+                    {childs}  {/* Esta incluído MainApp */}
                 </div>
                 <div id="dialog" className="row">
                     <div className="container">
