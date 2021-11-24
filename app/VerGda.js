@@ -208,7 +208,7 @@ class VerGda extends React.Component {
                             <div className="col-auto col-sm-4 p-1 info-verGDA">
                                 
                                 <p className="">Este GDA se lleva a cabo </p>
-                                <p> los días {gda.dia} a las {gda.horario}{gda.pm ? " pm" : " am"} </p>
+                                <p> los días {gda.dia} a las {gda.horario} </p>
                                 <p> y es para {gda.sexo=="Masculino" ? "Varones" : "Mujeres"} 
                                 {gda.edad=="Adultos" ? " Adult"+letra+"s"
                                 : " "+edad}</p>

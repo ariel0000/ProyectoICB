@@ -10,7 +10,7 @@ class IcbApp extends React.Component {
     constructor() {
         super(...arguments)
         this.state = {
-            profile: null
+            
         }
     }
 

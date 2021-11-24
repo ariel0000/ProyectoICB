@@ -18,7 +18,6 @@ class CrearGDA extends React.Component{
         super(props)
         this.state = {
             agregado: false,
-            pm: true,
             lideres: [],
             filtrados: [],
             fdia: "",
@@ -36,6 +35,13 @@ class CrearGDA extends React.Component{
         console.log(id)
       //  console.log("El value: "+e.target.id)  //Ej: opLunes
         document.getElementById(id).value = value
+        this.setState(update(this.state, {[id]: {$set: value}}))  //Se supone que actualiza el estado correcto 
+        document.getElementById("errorField").innerText = ""  //Quito cualquier mensaje de error  
+    }
+
+    handleHourChange(e){
+        let id = e.target.id  //fhora
+        let value = e.target.value
         this.setState(update(this.state, {[id]: {$set: value}}))  //Se supone que actualiza el estado correcto 
         document.getElementById("errorField").innerText = ""  //Quito cualquier mensaje de error  
     }
@@ -88,7 +94,6 @@ class CrearGDA extends React.Component{
                 "dia": this.state.fdia,
                 "edad": this.state.fedad,
                 "horario": this.state.fhora,
-                "pm":  this.state.pm,
                 "sexo": this.state.fsexo,
                 "lider": this.state.filtrados[0],
                 "participantes": []  //Por ahora no hay participantes
@@ -194,37 +199,13 @@ class CrearGDA extends React.Component{
                 </div>
                 <div className="dropdown row justify-content-center mb-1">
                     <div className="col-md-2 col-3 gx-0 boton">
-                        <button className="btn btn-light dropdown-toggle" type="button" id="dropdownHoraButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button className="btn btn-light boton" type="button" aria-expanded="false">
                             Hora
                         </button>
-                        <ul className="dropdown-menu" title="fhora" aria-labelledby="dropdownHoraButton">
-                            <li><span className="dropdown-item" title="1hs" onClick={this.handleChange.bind(this)} >1</span></li>
-                            <li><span className="dropdown-item" title="2hs" onClick={this.handleChange.bind(this)} >2</span></li>
-                            <li><span className="dropdown-item" title="3hs" onClick={this.handleChange.bind(this)} >3</span></li>
-                            <li><span className="dropdown-item" title="4hs" onClick={this.handleChange.bind(this)} >4</span></li>
-                            <li><span className="dropdown-item" title="5hs" onClick={this.handleChange.bind(this)} >5</span></li>
-                            <li><span className="dropdown-item" title="6hs" onClick={this.handleChange.bind(this)} >6</span></li>
-                            <li><span className="dropdown-item" title="7hs" onClick={this.handleChange.bind(this)} >7</span></li>
-                            <li><span className="dropdown-item" title="8hs" onClick={this.handleChange.bind(this)} >8</span></li>
-                            <li><span className="dropdown-item" title="9hs" onClick={this.handleChange.bind(this)} >9</span></li>
-                            <li><span className="dropdown-item" title="10hs" onClick={this.handleChange.bind(this)} >10</span></li>
-                            <li><span className="dropdown-item" title="11hs" onClick={this.handleChange.bind(this)} >11</span></li>
-                            <li><span className="dropdown-item" title="12hs" onClick={this.handleChange.bind(this)} >12</span></li>
-                        </ul>
                     </div>
-                    <div className="col-md-5 col-6">
-                        <input type="text" className="form-control" id="fhora" disabled={true}
-                            aria-label="Text input with dropdown button"></input>
-
-                    </div>
-                    <div className="col-md-1 col-3 gx-0">
-                        <button type="button" className="btn btn-secondary" onClick={this.AmPm.bind(this)}>
-                            {(this.state.pm) ?
-                                <span>pm</span>
-                                :
-                                <span>am</span>
-                            }
-                        </button>
+                    <div className="col-md-6 col-9">
+                        <input type="time" id="fhora" className="form-control" value={this.state.fhora} 
+                        onChange={this.handleHourChange.bind(this)} />
                     </div>
                 </div>
                 <div className="dropdown row justify-content-center mb-1">
@@ -286,15 +267,15 @@ class CrearGDA extends React.Component{
                     <br />
                     
                     <div className="col-md-7 col-7 mt-3">
-                        <button className="btn btn-primary mb-2" type="button" onClick={this.verGda.bind(this)}>
+                        <button className="btn btn-primary mb-2 me-1" type="button" onClick={this.verGda.bind(this)}>
                             Ver GDA's
                         </button>
                     
                         <br />
-                        <button className="btn btn-success mb-2" type="button" onClick={this.resetear.bind(this)}>
+                        <button className="btn btn-success mb-2 me-1" type="button" onClick={this.resetear.bind(this)}>
                             Crear Nuevo
                         </button>
-                        <button className="btn btn-primary mb-2" type="button" onClick={this.borrar.bind(this)}>
+                        <button className="btn btn-primary mb-2 me-1" type="button" onClick={this.borrar.bind(this)}>
                             Borrar
                         </button>
                     </div>
