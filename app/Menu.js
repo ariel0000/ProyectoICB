@@ -156,8 +156,7 @@ class Menu extends React.Component{
                                 <MdExpandMore />
                             }
                             Menú&nbsp;
-                            <FaBars />
-                            
+                            <FaBars />   
                         </a>
                     </li>
                     <li className={this.state.mostrarMenu ? "" : "pato"}>

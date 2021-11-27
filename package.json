@@ -9,10 +9,12 @@
   "author": "Oscar Blancarte",
   "license": "ISC",
   "devDependencies": {
-    "webpack": "^1.12.*",
-    "webpack-dev-server": "^1.10.*",
     "babel-preset-react": "^6.24.1",
-    "jsx-control-statements": "^3.2.8"
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "jsx-control-statements": "^3.2.8",
+    "webpack": "^1.12.*",
+    "webpack-dev-server": "^1.10.*"
   },
   "dependencies": {
     "babel-core": "^6.24.1",
