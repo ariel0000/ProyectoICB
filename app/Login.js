@@ -79,7 +79,7 @@ class Login extends React.Component{
                                 Crea un usuario o usa el usuario
                                 <strong> juan/1234</strong>
                             </p>
-                            <p className="text-light">¿No tienes una cuenta? <Link to="/MainApp/signup" className="text-white">
+                            <p className="text-light">¿No tienes una cuenta? <Link itemProp="url" to="/MainApp/signup" className="text-white">
                                 Registrarse
                                 </Link>
                             </p>

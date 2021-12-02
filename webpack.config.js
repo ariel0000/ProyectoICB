@@ -1,4 +1,5 @@
 module.exports = {
+    mode: 'development',
     entry: [
         __dirname + "/app/App.js",
     ],
@@ -9,16 +10,14 @@ module.exports = {
     },
 
     devServer:{
-        port: 8082,
+        port: 8082
     },
     module: {
-        loaders: [{
+        rules: [{
             test: /\.jsx?$/,
             exclude: /node_modules/,
-            loader: 'babel-loader',
-            query: {
-                presets: ['env', 'react'],
-                plugins: ["jsx-control-statements"]
+            use: {
+                loader: 'babel-loader'
             }
         }]
     }

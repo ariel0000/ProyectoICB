@@ -6,12 +6,13 @@ var webpack = require('webpack')
 var config = require('./webpack.config')
 var compiler = webpack(config)
 
-app.use('/pulbic', express.static(__dirname+ '/public'));
+app.use(express.static(path.join(__dirname, '/public')));  //Sacado de Internet
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: '10mb'}));
 
 app.use(require('webpack-dev-middleware')(compiler, {
-    noInfo: true,
+    index: true,
     publicPath: config.output.publicPath
 }));
 
