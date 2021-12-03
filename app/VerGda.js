@@ -81,12 +81,11 @@ class VerGda extends React.Component {
     findIndexOfParticipante(idPer){
         //Encuentro el índice del participante en el GDA -- Luego se retorna para la función "splice" de arriba
         let indice = null
-        for (let index = 0; index < this.state.gda.participantes.lenght; index++){
-            const participante = array[index]
+        for (let index = 0; index < this.state.gda.participantes.length; index++){
+            const participante = this.state.gda.participantes[index]
             if(participante.id == idPer){
-                break;
+                indice = index  //Podría retornar el index también
             }
-            indice = index  //Podría retornar el index también
         }
         return indice
     }
@@ -223,10 +222,11 @@ class VerGda extends React.Component {
                             <For each="participante" index="index" of={gda.participantes}>
                                 <div className="col-auto m-1" key={participante.id} title={participante.id}>
                                     <button type="button" className={gda.sexo=="Masculino"? "btn btn-info text-light dropdown-toggle" : 
-                                        "btn btn-info text-light dropdown-toggle"} type="button" data-bs-toggle="dropdown">
+                                        "btn btn-info text-light dropdown-toggle"} type="button" data-bs-toggle="dropdown"
+                                        id="dropdownMenuButton1">
                                         {participante.nombre}&nbsp;{participante.apellido}
                                     </button>
-                                    <ul className="dropdown-menu">
+                                    <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                         <li><a className="dropdown-item" href="#">Ver Info</a></li>
                                         <li><a className="dropdown-item" title={participante.nombre} href="#"
                                             onClick={this.handleBorrar.bind(this)}>Borrar</a></li>
