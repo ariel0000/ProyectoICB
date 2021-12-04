@@ -205,7 +205,6 @@ class VerGda extends React.Component {
                                 </button>
                             </div>
                             <div className="col-auto col-sm-4 p-1 info-verGDA">
-                                
                                 <p className="">Este GDA se lleva a cabo </p>
                                 <p> los días {gda.dia} a las {gda.horario} </p>
                                 <p> y es para {gda.sexo=="Masculino" ? "Varones" : "Mujeres"} 
@@ -221,7 +220,7 @@ class VerGda extends React.Component {
                             </div>
                             <For each="participante" index="index" of={gda.participantes}>
                                 <div className="col-auto m-1" key={participante.id} title={participante.id}>
-                                    <button type="button" className={gda.sexo=="Masculino"? "btn btn-info text-light dropdown-toggle" : 
+                                    <button type="button" className={participante.id==gda.lider.id? "btn btn-danger text-light dropdown-toggle" : 
                                         "btn btn-info text-light dropdown-toggle"} type="button" data-bs-toggle="dropdown"
                                         id="dropdownMenuButton1">
                                         {participante.nombre}&nbsp;{participante.apellido}

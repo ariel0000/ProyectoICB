@@ -96,13 +96,33 @@ class CrearGDA extends React.Component{
                 "horario": this.state.fhora,
                 "sexo": this.state.fsexo,
                 "lider": this.state.filtrados[0],
-                "participantes": []  //Por ahora no hay participantes
+                "participantes": []  //Solo el líder
             }
             APIInvoker.invokePOST('/icb-api/v1/crearGDA', request, response => {
                 //Transición de redirigiendo a "Ver GDA's"
                 console.log("GDA Creado. Id: "+response.body.id+" Día: "+response.body.dia+" Líder: "+response.body.lider.nombre)
                 let newState = update(this.state, {idGda: {$set: response.body.id}, agregado: {$set: true}})
                 //El nuevo estado implica una nueva vista
+                let persona = this.state.filtrados[0]
+              
+                let params= {
+                    "id": persona.id,
+                    "nombre": persona.nombre,
+                    "apellido": persona.apellido,
+                    "direccion": persona.direccion,
+                    "bautismo": persona.bautismo,
+                    "fecha_nacimiento": persona.fecha_nacimiento,
+                    "rol": persona.rol,
+                    "gda": {
+                        "id": response.body.id
+                    }
+                }
+                APIInvoker.invokePUT('/icb-api/v1/persona', params, response => {
+                    //
+                },
+                error => {
+                    document.getElementById("errorField").innerText = "Error: "+error.message
+                })
                 this.setState(newState)
             },
             error=> {
