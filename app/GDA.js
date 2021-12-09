@@ -16,10 +16,10 @@ class GDA extends React.Component{
                     <h6 className="text-white">Chat del GDA</h6>
                 </blockquote>
                 <div className="container-fluid">
-                    <div className="row justify-content-center align-items-center mt-2">
+        {/*    <div className="row justify-content-center align-items-center mt-2"> //Por ahora no le encuentro sentido
                         <div className="col-3 gx-2"><button className="btn btn-primary text-white">Editar GDA</button></div>
                         <div className="col-3 gx-2"><button className="btn btn-info text-white">Editar Participantes</button></div>
-                    </div>
+                </div> --> */}
                     <div className="row justify-content-center align-items-center mt-2">
                         <div className="col-12 gx-1"><Chat /></div>
                     </div>
