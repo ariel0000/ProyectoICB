@@ -11,8 +11,10 @@ const socketio = require('socket.io');
 const io = socketio(servidor);
 
 io.on('connection', socket => {
-  socket.on('conectado', () => {
-    console.log("Usuario conectado")
+  let nombre
+  socket.on('conectado', (nomb) => {
+    nombre = nomb
+    socket.broadcast.emit('mensajes', {nombre: nombre, mensajes: `${nombre} ha entrado en la sala del chat` })
   })
 
   socket.on('mensaje', (nombre, mensaje) => {
@@ -20,7 +22,7 @@ io.on('connection', socket => {
   })
 
   socket.on('disconnect', () => {
-    io.emit('mensajes', {servidor: "Servidor", mensaje: "Ha abandonado la sala"});
+    io.emit('mensajes', {servidor: "Servidor", mensaje: `${nombre} ha abandonado la sala` });
   })
 })
 

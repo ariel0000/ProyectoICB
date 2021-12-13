@@ -11,7 +11,7 @@ import Socket from './utils/Socket';
         }, [nombre]);  
 
         useEffect(() => {
-            socket.on('mensajes', mensaje => {
+            socket.on('mensajes', mensaje => {  //Lo de abajo se puede reemplazar con un 'splice'
                 setMensajes([...mensajes, mensaje]);  //El mensaje se añadirá a la última posición del array 'mensajes'
             })                                         //'express operator'
 
@@ -26,19 +26,18 @@ import Socket from './utils/Socket';
         return (
             <div className="infoApp container-fluid">
                 <div className="row mt-4">
-                    <div className="col-sm-6">
-                        <label className="form-label">Mensajes del servidor</label>
-                        <textarea id="mensajes" rows="10" cols="10" className="form-control"
-                         value={mensajes} onChange={e => setMensajes(e.target.value)} />
+                    <div className='col-12 bg-white text-dark'>
+                        {mensajes.map((e, i) =><div key={i}>{e.mensaje} </div>)}
                     </div>
-                    <div className="col-sm-5">
-                        <form className='form-control' onSubmit={submit}>
-                            <label className="form-label">Texto a enviar</label>
-                            <input type="text" id="texto" className="form-control" value={mensaje}
-                             onChange={e => setMensaje(e.target.value)} />
-                            <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
-                        </form>
-                    </div>
+                    <form className='form-control' onSubmit={submit}>
+                        <div className="col-sm-6">
+                            <label className="form-label">Mensajes del servidor</label>
+                            <textarea id="mensaje" rows="1" cols="1" className="form-control"
+                                value={mensaje} onChange={e => setMensaje(e.target.value)} />
+                        </div>
+                        <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
+                    </form>
+
                 </div>
             </div>
         )
