@@ -2,13 +2,13 @@ import React, {useState, useEffect, useRef} from 'react';
 import socket from './utils/Socket';
 import Socket from './utils/Socket';
 
-    function Chat({nombre}) {
+    function Chat({nombre, id}) {
         const [mensaje, setMensaje] = useState("");
         const [mensajes, setMensajes] = useState([]);
 
         useEffect(() => { //Se ejecuta ni bien termina el renderizado
-            socket.emit('conectado', nombre);
-        }, [nombre]);  
+            socket.emit('conectado', nombre, id);
+        }, [nombre], [id]);  
 
         useEffect(() => {
             socket.on('mensajes', mensaje => {  //Lo de abajo se puede reemplazar con un 'splice'
