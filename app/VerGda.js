@@ -42,14 +42,9 @@ class VerGda extends React.Component {
 
     AgregarPersona(idPer){
         //Esta es la función que se pasa como prop al componente Modal "AgregarPersona"
-        let newState
         APIInvoker.invokeGET('/icb-api/v1/findById/' + idPer, response => {
             this.actualizarPersonaEnGda(this.state.gda.id, response.body)
-            newState = update(this.state, {
-                gda: { participantes: { $push: [response.body] } },
-                error: { $set: "" }
-            }); //Agrego la persona a participantes
-            this.setState(newState)
+
         },
             error => {
                 let newState = update(this.state, { error: { $set: "Error: " + error.message } })
@@ -72,7 +67,10 @@ class VerGda extends React.Component {
     actualizarPersonaEnGda(idGda, request){
         let params = this.armarParametros(idGda, request)
         APIInvoker.invokePOST('/icb-api/v1/gda/participante', params, response => {
-            let newState = update(this.state, {error:{$set: ""}, success: {$set: "GDA Actualizado"}})
+            let newState = update(this.state, {
+                gda: { participantes: { $push: [response.body] } },
+                error: { $set: "" }, error:{$set: ""}, success: {$set: "GDA Actualizado"}
+            }); //Agrego la persona a participantes
             this.setState(newState)
         },
         error => {
@@ -126,14 +124,11 @@ class VerGda extends React.Component {
                 persona = per
             }
         });
-        var r = confirm("¿Está seguro que desea quitar a: "+value+" del GDA")
-        if(r === true & persona != null){
-            this.borrarPersonaDeGda(this.state.idGda, persona)  //Paso el parámetro idGda en null
-            let i = this.findIndexOfParticipante(idPer)
-            let newState = update(this.state, {gda: {participantes: {$splice: [[i, 1]]}}});  //Borro un elemento a partir del index "i"
-            this.setState(newState);
+        var r = confirm("¿Está seguro que desea quitar a: " + value + " del GDA")
+        if (r === true & persona != null) {
+            this.borrarPersonaDeGda(this.state.gda.id, persona)
         }
-        else{
+        else {
             //
         }
     }
@@ -147,11 +142,14 @@ class VerGda extends React.Component {
                 id: persona.id
             }
         }
-        APIInvoker.invokeDELETE('icb-api/v1/gda/participante', response => {
-            
+        APIInvoker.invokeDELETEBody('/icb-api/v1/gda/participante', params, response => {
+            let i = this.findIndexOfParticipante(persona.id)
+            let newState = update(this.state, { gda: { participantes: { $splice: [[i, 1]] } } });  //Borro un elemento a partir del index "i"
+            this.setState(newState);
         },
         error => {
-            //Nada que hacer. El participante es quitado del estado del componente desde la función que llama
+            let newState = update(this.state, {error:{$set: "Error: "+error.message}})
+            this.setState(newState)
         })
     }
 

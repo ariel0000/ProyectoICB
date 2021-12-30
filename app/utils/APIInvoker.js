@@ -18,11 +18,20 @@ class APIInvoker {
         this.invoke(url, okCallback, failCallback, params);
     }
 
+    invokeDELETEBody(url, body, okCallback,  failCallback){
+        let params={
+            method: 'delete',
+            headers: this.getAPIHeader(),
+            body: JSON.stringify(body)
+        }
+        this.invoke(url, okCallback, failCallback, params)
+    }
+
     invokeGET(url, okCallback, failCallback) {
         let params = {
             method: 'get',
             headers: this.getAPIHeader(),
-        }
+        };
         this.invoke(url, okCallback, failCallback, params);
     }
 
