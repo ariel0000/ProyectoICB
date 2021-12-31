@@ -106,19 +106,22 @@ class CrearGDA extends React.Component{
                 let persona = this.state.filtrados[0]
               
                 let params= {
-                    "id": persona.id,
-                    "nombre": persona.nombre,
-                    "apellido": persona.apellido,
-                    "direccion": persona.direccion,
-                    "bautismo": persona.bautismo,
-                    "fecha_nacimiento": persona.fecha_nacimiento,
-                    "rol": persona.rol,
+                    "persona": {
+                        "id": persona.id,
+                        "nombre": persona.nombre,
+                        "apellido": persona.apellido,
+                        "direccion": persona.direccion,
+                        "bautismo": persona.bautismo,
+                        "fecha_nacimiento": persona.fecha_nacimiento,
+                        "rol": persona.rol,
+                    },
                     "gda": {
-                        "id": response.body.id
+                        "id": response.body.id  //id del GDA recién creado
                     }
                 }
-                APIInvoker.invokePUT('/icb-api/v1/persona', params, response => {
-                    //
+
+                APIInvoker.invokePOST('/icb-api/v1/gda/participante', params, response => {
+                    // El líder ahora es participante también
                 },
                 error => {
                     document.getElementById("errorField").innerText = "Error: "+error.message

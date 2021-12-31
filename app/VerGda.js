@@ -90,7 +90,7 @@ class VerGda extends React.Component {
                 "fecha_nacimiento": request.fecha_nacimiento,
                 "rol": request.rol,
             },
-            gda: {
+            "gda": {
                 "id": idGda
             }
         }
