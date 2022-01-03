@@ -11,9 +11,9 @@ class Menu extends React.Component{
         super(props)   //Utilizando el prop 'perfil' nos tocará verificar si hay usuario registrado para luego mostrar ciertos submenues
         this.state = {
             reuniones: false,  //Por defecto no se desplega el menú de Reuniones. Ni ningún otro
-            gda : false,
             redesSociales: false,
             cursos: false,
+            gda: false,
             noticias: false,
             mostrarMenu: false,  //Por defecto es false
             salas: false,
@@ -141,7 +141,7 @@ class Menu extends React.Component{
 
     render(){
         const rol = this.props.perfil.rol.nivel
-        const gda = this.props.perfil.gda
+        const gdas = this.props.perfil.gdas
         const nombre = this.props.perfil.nombre
         return(
             <IconContext.Provider value={{size: "1.5em"}} >
@@ -221,9 +221,9 @@ class Menu extends React.Component{
                             :
                             <div></div>
                             }
-                            {(gda)?  //Tiene gda asignado. Sino, no se muestra el submenu
+                            {(gdas.length > 0)?  //Tiene gda asignado. Sino, no se muestra el submenu
                                 <Submenu item="Mi GDA" active={this.state.gda} cerrarMenu={this.cerrarMenu.bind(this)}
-                                enlace={"/MainApp/MiGda/"+gda.id} />
+                                enlace={"/MainApp/verGDAsEdit"} />
                                 :
                                 <div></div>
                             }
@@ -272,9 +272,7 @@ Menu.propTypes = {
 
 Menu.defaultProps = {
     perfil: {
-        gda: {
-            id: 0
-        },
+        gdas: [{ }],  //Lista vacía
         rol: {
             id: 0,  //Usuario sin loguearse por defecto
             nivel: 0    

@@ -36,11 +36,13 @@ render((
                 <Route path="mensajeria" component={Mensajeria} tab="mensajeria" />
                 <Route path="cerrarSesion" component={CerrarSesion} tab="cerrarSesion" />
                 <Route path="crearGda" component={CrearGDA} tab="crearGda" />
-                <Route path="MiGda/:gda" component={GDA} tab="MiGDA" />
                 <Route path="verGDAs"  component={VerGDAs} tab="verGDAs" >
                     <Route path=":gda" component={VerGda} tab="verGDA" >
                         <Route path="addOne" component={(params) => <Modal><AgregarNuevaPersona {...params}/> </Modal>} tab="addOne" />
                     </Route>
+                </Route>
+                <Route path="verGDAsEdit" component={VerGDAs} tab="verGDAsEdit" >
+                    <Route path=":gda" component={GDA} tab="MiGDA" />
                 </Route>
                 <Route path="signup" component={Signup} />
                 <Route path="login" component={Login} />

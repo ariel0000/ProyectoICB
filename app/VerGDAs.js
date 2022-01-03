@@ -8,8 +8,10 @@ class VerGDAs extends React.Component {
         super(props)
         this.state = {
             gdas: [],
-            gdaSeleccionado: null  //Esto no me permitió cargar el 'gdaSeleccionado' como child ya que siempre se pasa a null
+            gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado' como child ya que siempre se pasa a null
                                  // al momento de redirigir
+            paraUsuario: false  //Por defecto este componente es accedido por algún lider para ver todos los gdas
+            //Si paraUsuario es true --> Cargará los gdas del usuario para luego acceder a cada uno de ellos
         }
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -24,9 +26,15 @@ class VerGDAs extends React.Component {
 
     componentDidMount() {
         //Consultar el API para traer a todos los líderes. 
+        let valor=false;  //Determina cuando se utiliza este componente para mostrar sus GDAS y redirigir a MiGDA
+        let apiReq = "/icb-api/v1/gda"
+        if(this.props.location.pathname == "/MainApp/verGDAsEdit" ){
+            valor = true
+            apiReq = "/icb-api/v1/gdas/persona/"+this.props.profile.id
+        }
         document.addEventListener('mousedown', this.handleClickOutside);                                                            
-        APIInvoker.invokeGET('/icb-api/v1/gda', response => {
-            this.setState(update(this.state, { gdas: { $set: response.body } }))
+        APIInvoker.invokeGET(apiReq, response => {
+            this.setState(update(this.state, { gdas: { $set: response.body }, paraUsuario: {$set: valor} }))
         },
             error => {
                 if (error.status == 401) {
