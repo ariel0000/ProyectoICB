@@ -10,8 +10,9 @@ class VerGDAs extends React.Component {
             gdas: [],
             gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado' como child ya que siempre se pasa a null
                                  // al momento de redirigir
-            paraUsuario: false  //Por defecto este componente es accedido por algún lider para ver todos los gdas
+            paraUsuario: false,  //Por defecto este componente es accedido por algún lider para ver todos los gdas
             //Si paraUsuario es true --> Cargará los gdas del usuario para luego acceder a cada uno de ellos
+            info: false
         }
         this.setWrapperRef = this.setWrapperRef.bind(this);
         this.handleClickOutside = this.handleClickOutside.bind(this);
@@ -59,11 +60,12 @@ class VerGDAs extends React.Component {
      * Alert if clicked on outside of element
      */
     handleClickOutside(event) {
-        let newState = update(this.state, {gdaSeleccionado: { $set: null } })
-        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        let newState = update(this.state, {gdaSeleccionado: { $set: null }, info: {$set: false} })
+        if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {   //El único lugar donde se desactiva el info
             this.setState(newState)
         }
         console.log('click outside')
+        
     }
 
     handleClickGDA(e) {
@@ -84,10 +86,17 @@ class VerGDAs extends React.Component {
         //Redirige a "VerGDA"
         e.stopPropagation();
         document.removeEventListener('mousedown', this.handleClickOutside);
-        console.log('child');
         let idGda = e.target.parentElement.parentElement.title
         console.log('GDA ID: ' + idGda)
         browserHistory.push('/MainApp/VerGDAs/' + idGda)
+    }
+
+    handleClickIngresar(e){
+        //Redirigo a la vista para ver el GDA del usuario (componente MiGDA)
+        e.stopPropagation();
+        document.removeEventListener('mousedown', this.handleClickOutside);
+        let idGda = e.target.parentElement.parentElement.title
+        browserHistory.push('/MainApp/verGDAsEdit/'+idGda)
     }
 
     encontrarGdaEnArray(idGda){
@@ -128,11 +137,19 @@ class VerGDAs extends React.Component {
         }
     }
 
+    handleVerDetalleGDA(e){ //Para vista de Usuario. Permite mostrar info del GDA en el mismo círculito
+        e.stopPropagation();
+        let newState = update(this.state, {info: {$set: true}})
+        this.setState(newState)
+    }
+
     render() {
         let gdas = this.state.gdas
         let GDAClick = this.handleClickGDA
         let handleVerInfo = this.handleVerInfo
+        let handleVerDetalle = this.handleVerDetalleGDA
         let handleBorrarGDA = this.handleBorrarGDA
+        let forUser = this.state.paraUsuario  //Se usa para saber si la vista es de ver los gdas de un usuario
         //   let childs = this.props.children && React.cloneElement(this.props.children, {gda: this.state.gdaSeleccionado});
         //No se usa porque el estado this.gdaSeleccionado cambia en la recarga
         if(this.props.children != null){
@@ -140,15 +157,25 @@ class VerGDAs extends React.Component {
             document.removeEventListener('mousedown', this.handleClickOutside);
             //Funcionó
         }
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile})
 
         return (
             <div className="infoApp container-fluid px-2" >
                 <Choose>
                     <When condition={this.props.children == null} >
                         <blockquote className="text-center">
-                            <h6 className="text-white">
-                                Los distintos grupos de GDA están representados por sus líderes. Haga click en el Líder para ver información detallada.
-                            </h6>
+                            <Choose>
+                                <When condition={this.props.location.pathname == "/MainApp/verGDAsEdit"} >
+                                <h6 className="text-white">
+                                    Aquí aparecen los distintos GDA en los que estás anotado. Click en el Líder para Ingresar o ver información detallada.
+                                </h6>
+                                </When>
+                                <Otherwise>
+                                <h6 className="text-white">
+                                    Los distintos grupos de GDA están representados por sus líderes. Haga click en el Líder para ver información detallada.
+                                </h6>
+                                </Otherwise>
+                           </Choose>
                         </blockquote>
                         <br/>
                         <blockquote className="text-center">
@@ -159,15 +186,45 @@ class VerGDAs extends React.Component {
                                 <Choose>
                                     <When condition={this.state.gdaSeleccionado != null} >
 
-                                        <div className="col-auto mt-2 p-2" title={gda.id} key={gda.id} >
+                                        <div className="col-auto p-2" title={gda.id} key={gda.id} >
                                             {/* Si hay gda selec --> Cargo todos pero marco el seleccionado*/}
                                             <Choose>
                                                 <When condition={this.state.gdaSeleccionado.id == gda.id} >
+                                                    <Choose>
+                                                    <When condition={this.state.info}>  { /* Debe mostrar un poco de info del GDA */ }
+                                                    <div className={gda.sexo == "Masculino" ? "parent lider hombre " :
+                                                        "parent lider mujer"} ref={this.setWrapperRef.bind(this)}>
+                                                            <div className="secondary p-1" title='info' >
+                                                                {gda.dia} <br/>
+                                                                {gda.horario}
+                                                            </div>
+                                                            <div className="warning text-red p-0 mt-0">
+                                                                {gda.edad}
+                                                            </div>
+                                                    </div>
+                                                    </When>
+                                                    <Otherwise>
                                                     <div className={gda.sexo == "Masculino" ? "parent lider-edit hombre " :
                                                         "parent lider-edit mujer"} onClick={GDAClick.bind(this)} ref={this.setWrapperRef.bind(this)} >
-                                                        <div className="secondary p-2" title='info' onClick={handleVerInfo.bind(this)}>Ver Info</div>
-                                                        <div className="warning text-red p-2" title='borrar' onClick={handleBorrarGDA.bind(this)}>Borrar</div>
+                                                        <div className="secondary p-2" title='info' 
+                                                        onClick={(forUser)? this.handleClickIngresar.bind(this) : handleVerInfo.bind(this) }>
+                                                            {(forUser)? 
+                                                                "Ingresar"
+                                                            :
+                                                                "Ver Info"
+                                                            }
+                                                        </div>
+                                                        <div className="warning text-red p-2" title='borrar' 
+                                                        onClick={(forUser)? handleVerDetalle.bind(this) : handleBorrarGDA.bind(this)}>
+                                                            {(forUser)?
+                                                             "Info"
+                                                             :
+                                                             "Borrar" 
+                                                            }
+                                                        </div>
                                                     </div>
+                                                    </Otherwise>
+                                                    </Choose>
                                                 </When>
                                                 <Otherwise>
                                                     <div className={gda.sexo == "Masculino" ? "parent lider hombre " : "parent lider mujer "}
@@ -193,7 +250,7 @@ class VerGDAs extends React.Component {
                         </div>
                     </When>
                     <Otherwise>
-                        {this.props.children}
+                        {childs}
                     </Otherwise>
                 </Choose>
             </div>

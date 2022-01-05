@@ -26,7 +26,7 @@ class GDA extends React.Component{
                         <div className="col-3 gx-2"><button className="btn btn-info text-white">Editar Participantes</button></div>
                 </div> --> */}
                     <div className="row justify-content-center align-items-center mt-2">
-                        <div className="col-12 gx-2"><Chat nombre={this.props.profile.nombre} id={this.props.profile.gda.id+'gda'} /></div>
+                        <div className="col-12 gx-2"><Chat nombre={this.props.profile.nombre} id={this.props.params.gda+'gda'} /></div>
                     </div>
                     <div className="row justify-content-center align-items-center mt-2">
                         <div className="col-12 gx-1">Integrantes</div>
