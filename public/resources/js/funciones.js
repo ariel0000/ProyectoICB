@@ -1,16 +1,15 @@
 module.exports = {
     servicio: function(app, http, socketio){
         const servidor = http.createServer(app);
-        io = socketio(servidor)
+        const options = {reconnection: true, reconnectionAttemps: Infinity}
+        io = socketio(servidor, options)
         io.on('connection', socket => {
             let nombre, id
             socket.on('conectado', (nomb, idChat) => {
               id = idChat
               nombre = nomb
               socket.join(id)
-              
             })
-          
             socket.on('mensaje', (nombre, mensaje) => {
               io.to(id).emit('mensajes', {nombre, mensaje});
             })  

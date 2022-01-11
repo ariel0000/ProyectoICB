@@ -191,18 +191,18 @@ class VerGDAs extends React.Component {
                                             <Choose>
                                                 <When condition={this.state.gdaSeleccionado.id == gda.id} >
                                                     <Choose>
-                                                    <When condition={this.state.info}>  { /* Debe mostrar un poco de info del GDA */ }
-                                                    <div className={gda.sexo == "Masculino" ? "parent lider hombre " :
-                                                        "parent lider mujer"} ref={this.setWrapperRef.bind(this)}>
-                                                            <div className="secondary p-1" title='info' >
-                                                                {gda.dia} <br/>
-                                                                {gda.horario}
+                                                        <When condition={this.state.info}>  { /* Debe mostrar un poco de info del GDA */}
+                                                            <div className={gda.sexo == "Masculino" ? "parent lider hombre " :
+                                                                "parent lider mujer"} ref={this.setWrapperRef.bind(this)}>
+                                                                <div className="secondary p-1" title='info' >
+                                                                    {gda.dia} <br />
+                                                                    {gda.horario}
+                                                                </div>
+                                                                <div className="warning text-red p-0 mt-0">
+                                                                    {gda.edad}
+                                                                </div>
                                                             </div>
-                                                            <div className="warning text-red p-0 mt-0">
-                                                                {gda.edad}
-                                                            </div>
-                                                    </div>
-                                                    </When>
+                                                        </When>
                                                     <Otherwise>
                                                     <div className={gda.sexo == "Masculino" ? "parent lider-edit hombre " :
                                                         "parent lider-edit mujer"} onClick={GDAClick.bind(this)} ref={this.setWrapperRef.bind(this)} >

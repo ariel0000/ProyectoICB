@@ -31,6 +31,9 @@ app.listen(8181, function(){
     console.log('Example app listening on port 8181');
 })
 
+//se usa en entornos de producción (Si no está definido port toma valor 3000) 
+app.set('port', process.env.PORT || 3000) 
+
 let serviceChat = servidor.servicio(app, http, socketio)
-serviceChat.listen(3000, () => console.log("Servidor inicializado"))
+serviceChat.listen(app.get('port'), () => console.log("Servidor inicializado"))
 
