@@ -1,7 +1,7 @@
 module.exports = {
     servicio: function(app, http, socketio){
         const servidor = http.createServer(app);
-        const options = {reconnection: true, reconnectionAttemps: Infinity}
+        const options = {reconnection: false, reconnectionAttemps: Infinity}
         io = socketio(servidor, options)
         io.on('connection', socket => {
             let nombre, id

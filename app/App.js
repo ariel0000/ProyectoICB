@@ -49,6 +49,7 @@ render((
                 <Route path="*" component={Error404} />
             </Route>
         </Route>
+        <Route path="/reload" component={null} key="reload" />
     </Router>
 ), document.getElementById('root'));
 

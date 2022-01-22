@@ -1,54 +1,83 @@
-import React, {useState, useEffect, useRef} from 'react';
-import socket from './utils/Socket';
+import React, { useState, useEffect, useRef } from 'react';
+import update from 'react-addons-update'
+import socket from './utils/Socket';  //Empieza estando conectado
 import WindowFocusHandler from './WindowsFocusHandler';
 
-    function Chat({nombre, id}) {  //Estos atributos son pasados como props 
-        const [mensaje, setMensaje] = useState("");
-        const [mensajes, setMensajes] = useState([]);
-        
-        useEffect(() => { //Se ejecuta ni bien termina el renderizado
-            socket.emit('conectado', nombre, id);
-        }, [nombre], [id]);  
+// function Chat({nombre, id, pathname}) {  //Estos atributos son pasados como props 
+class Chat extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            mensajes: [],
+            mensaje: ""
+        }
+    }
 
-        useEffect(() => {
-            socket.on('mensajes', mensaje => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-                setMensajes([...mensajes, mensaje]);  //El mensaje se añadirá a la última posición del array 'mensajes'
-            })                                         //'express operator'
+    componentDidMount() { //Se ejecuta ni bien termina el renderizado
+        let newState;
+        socket.emit('conectado', this.props.nombre, this.props.id);
+        socket.on('mensajes', mensaje => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
+            console.log(mensaje)
+            newState = update(this.state, {mensajes: {$push: [mensaje]}})
+            this.setState(newState)
+        })
+    }
 
-            return() => {socket.off()}
-        }, [mensajes]) 
+    setMensaje(e){  //Actualiza el mensaje
+        let value = e.target.value
+        let newState = update(this.state, {mensaje: {$set: value}})
+        this.setState(newState)
+    }
 
-        const submit = (e) => {
-            e.preventDefault();  
-            socket.emit('mensaje', nombre, mensaje)
+    submit(e){
+        //habría que chequear que el mensaje no sea nulo
+        e.preventDefault();
+        if(this.state.mensaje == ''){
+            return
+        }
+        let newState = update(this.state, {mensaje: {$set: ''}})
+        socket.emit('mensaje', this.props.nombre, this.state.mensaje)
+        this.setState(newState)
+    }
+
+    render() {
+        const onBlur = () => {
+            console.log('Me jui')
         }
 
-        const connect = () => {
-            socket.connect();
+            console.log('ENTRE A LA FUNCIÓN ifDisconnected')
+            console.log(socket.disconnected)
+            //  if(socket.disconnected){  //No funciona -- Siempre tira false
+           // reload()
         }
 
-        const disconnect = () => {
-            socket.disconnect
-        }
+      /*  const reload = () => {
+            const current = this.props.pathname
+            this.props.history.replace(`/reload`);
+            setTimeout(() => {
+                this.props.history.replace(current);
+            });
+        } */
 
+        let mensajes = this.state.mensajes
         return (
             <div className="infoApp container-fluid">
                 <div className="row mt-4">
                     <div className='col-12 bg-white text-dark'>
-                        {mensajes.map((e, i) =><div key={i}>{e.mensaje} </div>)}
+                        {mensajes.map((e, i) => <div key={i}>{e.mensaje} </div>)}
                     </div>
-                    <form className='form-control' onSubmit={submit}>
+                    <form className='form-control' onSubmit={this.submit.bind(this)}>
                         <div className="col-sm-6">
                             <label className="form-label">Mensajes del servidor</label>
                             <textarea id="mensaje" rows="1" cols="1" className="form-control"
-                                value={mensaje} onChange={e => setMensaje(e.target.value)} />
+                                value={this.state.mensaje} onChange={this.setMensaje.bind(this)} />
                         </div>
                         <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                     </form>
-                    <WindowFocusHandler funcion1 = {connect} funcion2={disconnect} />
+                    <WindowFocusHandler beginFocus={ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
                 </div>
             </div>
         )
     }
-
+}
 export default Chat;

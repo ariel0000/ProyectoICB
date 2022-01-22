@@ -27,7 +27,8 @@ class GDA extends React.Component{
                 </div> --> */}
                     <div className="row justify-content-center align-items-center mt-2">
                         <div className="col-12 gx-2">
-                            <Chat nombre={this.props.profile.nombre+' '+this.props.profile.apellido} id={this.props.params.gda+'gda'} />
+                            <Chat nombre={this.props.profile.nombre+' '+this.props.profile.apellido} 
+                                id={this.props.params.gda+'gda'} pathname={'/MainApp/verGDAsEdit/'+this.state.idGda}/>
                         </div>
                     </div>
                     <div className="row justify-content-center align-items-center mt-2">
