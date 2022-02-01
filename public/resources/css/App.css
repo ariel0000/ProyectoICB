@@ -129,7 +129,7 @@ li {
 
 .infoApp{
     margin-top: 10px;
-    color:rgb(245, 252, 212);
+    color:rgb(216, 240, 255);
     padding: 0px;  /* Con el breakppoint en 'VerGDAs' se aumenta el padding para pantallas más grandes que 'sm' */
 }
 

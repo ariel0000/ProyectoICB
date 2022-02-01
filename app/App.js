@@ -20,14 +20,15 @@ import AgregarNuevaPersona from './AgregarPersona'
 import Modal from './Modal'
 import GDA from './GDA'
 
-var createBrowserHistory = require('history/createBrowserHistory')
+var createBrowserHistory = require("history").createBrowserHistory
 
 render((
     <Router history={browserHistory}>
         <div id="dialog" />
-        <Route component={IcbApp} path="/">
+        <Route path="/" component={props => <IcbApp {...props} /> } >
             <Route path="MainApp" component={MainApp} >  /*Puede reutilizar otros componentes hijos*/
                 <IndexRoute component={Bienvenido} tab="bienvenido" />  //Nose que es tab
+                <Route path="/reload" component={null} key="reload" />
                 <Route path="comoFunciona" component={ComoFunciona} tab="comoFunciona"/>
                 <Route path="infoReu" component={InfoReu} tab="infoReu" />
                 <Route path="infoGDA" component={InfoGDA} tab="infoGDA" />
@@ -49,8 +50,5 @@ render((
                 <Route path="*" component={Error404} />
             </Route>
         </Route>
-        <Route path="/reload" component={null} key="reload" />
     </Router>
 ), document.getElementById('root'));
-
-

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react'
 import update from 'react-addons-update'
 import socket from './utils/Socket';  //Empieza estando conectado
 import WindowFocusHandler from './WindowsFocusHandler';
@@ -21,6 +21,18 @@ class Chat extends React.Component {
             newState = update(this.state, {mensajes: {$push: [mensaje]}})
             this.setState(newState)
         })
+        socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
+            console.log('Failed to connect to server');
+            this.props.reload()
+        });
+        socket.on('disconnect', function(){ //Entro aquí --> Habrá que recargar desde acá
+            console.log('Desconectado')
+            this.props.reload()
+        });
+    }
+
+    componentWillUnmount(){
+        socket.off()
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -40,13 +52,19 @@ class Chat extends React.Component {
         this.setState(newState)
     }
 
+    recargar(e){
+        e.preventDefault()
+        this.props.reload()
+    }
+
     render() {
         const onBlur = () => {
             console.log('Me jui')
         }
 
+        const ifDisconnected = () => {
             console.log('ENTRE A LA FUNCIÓN ifDisconnected')
-            console.log(socket.disconnected)
+            console.log(socket.OPEN)
             //  if(socket.disconnected){  //No funciona -- Siempre tira false
            // reload()
         }
@@ -75,6 +93,11 @@ class Chat extends React.Component {
                         <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                     </form>
                     <WindowFocusHandler beginFocus={ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
+                </div>
+                <div className='infoApp'>
+                    <button type="button" id="enviar" className="btn btn-primary mt-2" onClick={this.recargar.bind(this)}>
+                        Enviar
+                    </button>
                 </div>
             </div>
         )

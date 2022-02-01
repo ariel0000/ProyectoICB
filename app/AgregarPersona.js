@@ -1,7 +1,7 @@
 import React from 'react'
 import APIInvoker from './utils/APIInvoker'
 import update from 'react-addons-update'
-import { browserHistory } from 'react-router'
+import {browserHistory} from 'react-router'
 
 class AgregarPersona extends React.Component{
 
