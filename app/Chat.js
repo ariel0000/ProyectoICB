@@ -9,15 +9,16 @@ class Chat extends React.Component {
         super(props)
         this.state = {
             mensajes: [],
-            mensaje: ""
+            mensaje: "",
+            conectado: true
         }
     }
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
         let newState;
+        socket.connect()
         socket.emit('conectado', this.props.nombre, this.props.id);
-        socket.on('mensajes', mensaje => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-            console.log(mensaje)
+        socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
             newState = update(this.state, {mensajes: {$push: [mensaje]}})
             this.setState(newState)
         })
@@ -25,14 +26,15 @@ class Chat extends React.Component {
             console.log('Failed to connect to server');
             this.props.reload()
         });
-        socket.on('disconnect', function(){ //Entro aquí --> Habrá que recargar desde acá
-            console.log('Desconectado')
-            this.props.reload()
-        });
+        socket.on('disconnect', () => {
+            let newState = update(this.state, {conectado: {$set: false}});
+            this.setState(newState);
+        })
     }
 
     componentWillUnmount(){
-        socket.off()
+        console.log('Server desconectado')
+        socket.close()  //decía socket.off()
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -52,8 +54,14 @@ class Chat extends React.Component {
         this.setState(newState)
     }
 
-    recargar(e){
-        e.preventDefault()
+    ifDisconnected() {  
+        console.log("state.conectado: "+this.state.conectado)
+        if(!this.state.conectado){  //Si no está conectado --> recargo la página
+            this.recargar()
+        }
+    }
+
+    recargar(){
         this.props.reload()
     }
 
@@ -61,21 +69,6 @@ class Chat extends React.Component {
         const onBlur = () => {
             console.log('Me jui')
         }
-
-        const ifDisconnected = () => {
-            console.log('ENTRE A LA FUNCIÓN ifDisconnected')
-            console.log(socket.OPEN)
-            //  if(socket.disconnected){  //No funciona -- Siempre tira false
-           // reload()
-        }
-
-      /*  const reload = () => {
-            const current = this.props.pathname
-            this.props.history.replace(`/reload`);
-            setTimeout(() => {
-                this.props.history.replace(current);
-            });
-        } */
 
         let mensajes = this.state.mensajes
         return (
@@ -92,12 +85,7 @@ class Chat extends React.Component {
                         </div>
                         <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                     </form>
-                    <WindowFocusHandler beginFocus={ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
-                </div>
-                <div className='infoApp'>
-                    <button type="button" id="enviar" className="btn btn-primary mt-2" onClick={this.recargar.bind(this)}>
-                        Enviar
-                    </button>
+                    <WindowFocusHandler beginFocus={this.ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
                 </div>
             </div>
         )
