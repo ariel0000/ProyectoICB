@@ -19,16 +19,17 @@ class Chat extends React.Component {
         socket.connect()
         socket.emit('conectado', this.props.nombre, this.props.id);
         socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-            newState = update(this.state, {mensajes: {$push: [mensaje]}})
-            this.setState(newState)
+            /*newState = update(this.state, {mensajes: {$push: [mensaje]}})
+            this.setState(newState)*/
+            this.props.addMsg(mensaje)
         })
         socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
             console.log('Failed to connect to server');
             this.props.reload()
         });
         socket.on('disconnect', () => {
-            let newState = update(this.state, {conectado: {$set: false}});
-            this.setState(newState);
+            let nuevoEstado = update(this.state, {conectado: {$set: false}});
+            this.setState(nuevoEstado);
         })
     }
 
@@ -54,6 +55,14 @@ class Chat extends React.Component {
         this.setState(newState)
     }
 
+    static getDerivedStateFromProps(nextProps, prevState){
+        if(prevState.mensajes != nextProps.mensajes)
+        return {
+            mensajes: nextProps.mensajes
+        }
+        return null
+    }
+
     ifDisconnected() {  
         console.log("state.conectado: "+this.state.conectado)
         if(!this.state.conectado){  //Si no está conectado --> recargo la página
@@ -63,6 +72,15 @@ class Chat extends React.Component {
 
     recargar(){
         this.props.reload()
+    }
+
+    static getDerivedStateFromProps(nextProps, state){
+        if(nextProps.mensajes != state.mensajes){
+            return{
+                mensajes: nextProps.mensajes
+            }
+        }
+        return null
     }
 
     render() {

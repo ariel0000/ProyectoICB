@@ -1,13 +1,19 @@
 import React from 'react'
 import Chat from './Chat'
 import APIInvoker from './utils/APIInvoker'
+import update from 'react-addons-update'    
 
 class GDA extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            idGda: this.props.params.gda
+            idGda: this.props.params.gda,
+            mensajes:[]
         }
+    }
+
+    componentDidMount(){
+        this.consultarMensajes()
     }
 
     reload = ()=>{
@@ -20,8 +26,23 @@ class GDA extends React.Component{
         }, 0);
     }
 
-    consultarMensajes(){
-        APIInvoker.invokeGET('/icb-api/v1/')
+    consultarMensajes = () => {
+        //tengo que cargar los mensajes que corresponden a este GDA. 
+        // El componente CHAT se encargará de consultar esta función pasada como prop
+        let newState
+        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber=0&pageSize=5',
+            response=> {
+                newState = update(this.state, {mensajes: {$push: response.body}})
+                this.setState(newState)
+        },
+            error=> {
+                console.log('Error: '+error.message)
+        })
+    }
+
+    agregarMensaje(mensaje){
+        let newState = update(this.state, {mensajes: {$splice: [[0, 0, mensaje]]}})
+        this.setState(newState)
     }
 
     render() {
@@ -38,7 +59,9 @@ class GDA extends React.Component{
                     <div className="row justify-content-center align-items-center mt-2">
                         <div className="col-12 gx-2">
                             <Chat nombre={this.props.profile.nombre+' '+this.props.profile.apellido} 
-                                id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} />
+                                id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
+                                getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
+                                addMsg={this.agregarMensaje.bind(this)}/>
                         </div>
                     </div>
                     <div className="row justify-content-center align-items-center mt-2">
