@@ -8,12 +8,14 @@ class GDA extends React.Component{
         super(props)
         this.state = {
             idGda: this.props.params.gda,
+            GDA: null,
             mensajes:[]
         }
     }
 
     componentDidMount(){
         this.consultarMensajes()
+        this.cargarGDA()
     }
 
     reload = ()=>{
@@ -24,6 +26,17 @@ class GDA extends React.Component{
         setTimeout(() => {
             this.props.router.replace(current)
         }, 0);
+    }
+
+    cargarGDA(){
+        let newState
+        APIInvoker.invokeGET('/icb-api/v1/gda/'+this.state.idGda, response => {
+            newState = update(this.state, {GDA: {$set: response.body}})
+            this.setState(newState)
+        },
+        error => {
+            console.log('Error: '+error.message)
+        })
     }
 
     consultarMensajes = () => {
@@ -41,8 +54,34 @@ class GDA extends React.Component{
     }
 
     agregarMensaje(mensaje){
-        let newState = update(this.state, {mensajes: {$splice: [[0, 0, mensaje]]}})
-        this.setState(newState)
+        //Acá tendría que guardar el mensaje --> Luego el response con el mensaje guardado se carga en el estado
+        let newState
+        let params = {
+            "mensaje": mensaje.mensaje,  //También tengo el nombre pero eso no me sirve acá
+            "persona": {
+                "id": this.props.profile.id,
+                "rol": {
+                    "id": this.props.profile.rol.id
+                }
+            },
+            "gda": {
+                "id": this.state.GDA.id,
+                "lider": {
+                    "id": this.state.GDA.lider.id,
+                    "rol": {
+                        "id": this.state.GDA.lider.rol.id
+                    }
+                }
+            }
+        }
+        APIInvoker.invokePOST('/icb-api/v1/gda/mensaje/', params, 
+        response => {
+            newState = update(this.state, {mensajes: {$splice: [[0, 0, response.body]]}})
+            this.setState(newState) 
+        },
+        error => {
+            console.log('Error: '+error.message)
+        })
     }
 
     render() {

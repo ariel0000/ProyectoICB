@@ -15,7 +15,6 @@ class Chat extends React.Component {
     }
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
-        let newState;
         socket.connect()
         socket.emit('conectado', this.props.nombre, this.props.id);
         socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
