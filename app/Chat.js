@@ -16,12 +16,16 @@ class Chat extends React.Component {
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
         socket.connect()
-        socket.emit('conectado', this.props.nombre, this.props.id);
+        socket.emit('conectado', this.props.id);
         socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-            /*newState = update(this.state, {mensajes: {$push: [mensaje]}})
-            this.setState(newState)*/
-            this.props.addMsg(mensaje)
-        })
+                if(mensaje.idper == this.props.idpersona){
+                    this.props.addMsg(mensaje); //Solo se agregar el msj si soy el usuario que lo creo
+                    //Se podría agregar aquí un nuevo mensaje al socket para actualizar los otros amigos
+                }
+                else{
+                    this.props.getMensajes() //Funciona pero se duplican los mensajes que vemos ¿?
+                }
+            })
         socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
             console.log('Failed to connect to server');
             this.props.reload()
@@ -34,7 +38,7 @@ class Chat extends React.Component {
 
     componentWillUnmount(){
         console.log('Server desconectado')
-        socket.close()  //decía socket.off()
+        socket.off()  //decía socket.off()
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -50,7 +54,7 @@ class Chat extends React.Component {
             return
         }
         let newState = update(this.state, {mensaje: {$set: ''}})
-        socket.emit('mensaje', this.props.nombre, this.state.mensaje)
+        socket.emit('mensaje', this.props.idpersona, this.state.mensaje)
         this.setState(newState)
     }
 
@@ -73,18 +77,10 @@ class Chat extends React.Component {
         this.props.reload()
     }
 
-    static getDerivedStateFromProps(nextProps, state){
-        if(nextProps.mensajes != state.mensajes){
-            return{
-                mensajes: nextProps.mensajes
-            }
-        }
-        return null
-    }
 
     render() {
         const onBlur = () => {
-            console.log('Me jui')
+            socket.disconnect()
         }
 
         let mensajes = this.state.mensajes

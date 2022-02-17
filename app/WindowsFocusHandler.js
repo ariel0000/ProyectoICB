@@ -12,7 +12,7 @@ const WindowFocusHandler = ({beginFocus, beginBlur}) => {
         window.removeEventListener('focus', onFocus);
         window.removeEventListener('blur', onBlur);
       };
-    })
+    }, [])
     const onFocus = () => {
         console.log('Tab is in focus');
         beginFocus();
@@ -20,7 +20,7 @@ const WindowFocusHandler = ({beginFocus, beginBlur}) => {
       
       // User has switched away from the tab (AKA tab is hidden)
       const onBlur = () => {
-        console.log('Tab is blurred');
+        beginBlur();
       //  beginBlur    --No se usa por ahora--
       };
 

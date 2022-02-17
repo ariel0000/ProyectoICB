@@ -29,6 +29,7 @@ class GDA extends React.Component{
     }
 
     cargarGDA(){
+        //Carga el estado GDA de este componente con el GDA correspondiente
         let newState
         APIInvoker.invokeGET('/icb-api/v1/gda/'+this.state.idGda, response => {
             newState = update(this.state, {GDA: {$set: response.body}})
@@ -57,7 +58,7 @@ class GDA extends React.Component{
         //Acá tendría que guardar el mensaje --> Luego el response con el mensaje guardado se carga en el estado
         let newState
         let params = {
-            "mensaje": mensaje.mensaje,  //También tengo el nombre pero eso no me sirve acá
+            "mensaje": mensaje.mensaje,  //También tengo el idper pero eso no me sirve acá
             "persona": {
                 "id": this.props.profile.id,
                 "rol": {
@@ -97,10 +98,10 @@ class GDA extends React.Component{
                 </div> --> */}
                     <div className="row justify-content-center align-items-center mt-2">
                         <div className="col-12 gx-2">
-                            <Chat nombre={this.props.profile.nombre+' '+this.props.profile.apellido} 
+                            <Chat idpersona={this.props.profile.id+' '+this.props.profile.apellido} 
                                 id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
                                 getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
-                                addMsg={this.agregarMensaje.bind(this)}/>
+                                addMsg={this.agregarMensaje.bind(this)} />
                         </div>
                     </div>
                     <div className="row justify-content-center align-items-center mt-2">
