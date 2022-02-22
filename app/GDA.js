@@ -40,13 +40,13 @@ class GDA extends React.Component{
         })
     }
 
-    consultarMensajes = () => {
+    consultarMensajes(){
         //tengo que cargar los mensajes que corresponden a este GDA. 
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState
         APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber=0&pageSize=5',
             response=> {
-                newState = update(this.state, {mensajes: {$push: response.body}})
+                newState = update(this.state, {mensajes: {$set: response.body}})
                 this.setState(newState)
         },
             error=> {

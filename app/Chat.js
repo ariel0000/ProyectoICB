@@ -16,20 +16,26 @@ class Chat extends React.Component {
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
         socket.connect()
-        socket.emit('conectado', this.props.id);
+        socket.emit('conectado', this.props.id);  //id del chat
         socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-                if(mensaje.idper == this.props.idpersona){
-                    this.props.addMsg(mensaje); //Solo se agregar el msj si soy el usuario que lo creo
-                    //Se podría agregar aquí un nuevo mensaje al socket para actualizar los otros amigos
-                }
-                else{
-                    this.props.getMensajes() //Funciona pero se duplican los mensajes que vemos ¿?
-                }
-            })
+            if(mensaje.idper == this.props.idpersona){
+                this.agregarMensaje(mensaje)
+
+                // this.props.addMsg(mensaje) //Solo se agregar el msj si soy el usuario que lo creo
+            //La f tendría que ser pasada como 2-do parámetro para ser llamada como callback
+            }
+        })
+
+        socket.on('msgBroadcast', () => {
+            //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
+            this.props.getMensajes()
+        })
+
         socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
             console.log('Failed to connect to server');
             this.props.reload()
         });
+
         socket.on('disconnect', () => {
             let nuevoEstado = update(this.state, {conectado: {$set: false}});
             this.setState(nuevoEstado);
@@ -38,7 +44,12 @@ class Chat extends React.Component {
 
     componentWillUnmount(){
         console.log('Server desconectado')
-        socket.off()  //decía socket.off()
+        socket.off()  //Cancela todos los eventos que pueda tener el socket
+    }
+
+    agregarMensaje(mensaje){
+        this.props.addMsg(mensaje)
+        socket.emit('msgToAnother')
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -59,9 +70,10 @@ class Chat extends React.Component {
     }
 
     static getDerivedStateFromProps(nextProps, prevState){
-        if(prevState.mensajes != nextProps.mensajes)
-        return {
-            mensajes: nextProps.mensajes
+        if(prevState.mensajes != nextProps.mensajes){
+            return {
+                mensajes: nextProps.mensajes
+            }
         }
         return null
     }
