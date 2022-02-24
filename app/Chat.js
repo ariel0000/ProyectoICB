@@ -48,6 +48,7 @@ class Chat extends React.Component {
     }
 
     agregarMensaje(mensaje){
+        //Usar sync y await para que la segunda función espere a la primera
         this.props.addMsg(mensaje)
         socket.emit('msgToAnother')
     }
@@ -100,7 +101,12 @@ class Chat extends React.Component {
             <div className="infoApp container-fluid">
                 <div className="row mt-4">
                     <div className='col-12 bg-white text-dark'>
-                        {mensajes.map((e, i) => <div key={i}>{e.mensaje} </div>)}
+                        {mensajes.map((e, i) => 
+                        <div key={i}>
+                            <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
+                            <br />
+                            {e.mensaje}
+                        </div>)}
                     </div>
                     <form className='form-control' onSubmit={this.submit.bind(this)}>
                         <div className="col-sm-6">

@@ -15,7 +15,8 @@ app.use(express.static(path.join(__dirname, "./public")));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: '10mb'}));
 
-app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+app.use('/css_min', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+app.use('/css', express.static(__dirname + '/public/resources/css'))
 app.use('/js', express.static(__dirname + '/public/resources/js'));
 
 app.use(require('webpack-dev-middleware')(compiler, {
