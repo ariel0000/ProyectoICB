@@ -1,7 +1,7 @@
 import React from 'react'
 import Chat from './Chat'
 import APIInvoker from './utils/APIInvoker'
-import update from 'react-addons-update'    
+import update from 'react-addons-update'   
 
 class GDA extends React.Component{
     constructor(props){
@@ -54,9 +54,8 @@ class GDA extends React.Component{
         })
     }
 
-    agregarMensaje(mensaje){
+    agregarMensaje(mensaje, callbackF){
         //Acá tendría que guardar el mensaje --> Luego el response con el mensaje guardado se carga en el estado
-        let newState
         let params = {
             "mensaje": mensaje.mensaje,  //También tengo el idper pero eso no me sirve acá
             "persona": {
@@ -75,15 +74,38 @@ class GDA extends React.Component{
                 }
             }
         }
-        APIInvoker.invokePOST('/icb-api/v1/gda/mensaje/', params, 
-        response => {
-            newState = update(this.state, {mensajes: {$splice: [[0, 0, response.body]]}})
-            this.setState(newState) 
-        },
-        error => {
-            console.log('Error: '+error.message)
+        fetch('http://192.168.1.150:8080'+'/icb-api/v1/gda/mensaje', {
+            method: 'POST',
+            body: JSON.stringify(params),
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: 'Bearer '+window.localStorage.getItem("token")
+            }
+        })
+        .then(res => res.json())
+        .then(json => {
+            let newState = update(this.state, {mensajes: {$splice: [[0, 0, json.body]]}})
+            this.setState(newState)
+            callbackF()
+            
+        })
+        .catch(err => {
+            console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)
         })
     }
+
+/*    addMsg(mensaje){
+        let respuesta = this.agregarMensaje(mensaje) //Retorno un Promise (una Promesa)
+        console.log('typeOff: '+typeof(respuesta))
+        respuesta
+            .then(msgsRta => {
+                let newState = update(this.state, {mensajes: {$splice: [[0, 0, msgsRta]]}})
+                this.setState(newState) 
+            })
+            .catch(err => {
+                console.log('Error: '+err)
+            })
+    }*/
 
     render() {
         return(
@@ -103,9 +125,6 @@ class GDA extends React.Component{
                                 getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
                                 addMsg={this.agregarMensaje.bind(this)} />
                         </div>
-                    </div>
-                    <div className="row justify-content-center align-items-center mt-2">
-                        <div className="col-12 gx-1">Integrantes</div>
                     </div>
                 </div>
             </div>

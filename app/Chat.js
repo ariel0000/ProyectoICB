@@ -26,7 +26,7 @@ class Chat extends React.Component {
             }
         })
 
-        socket.on('msgBroadcast', () => {
+        socket.on('msgBroadcast', (mensaje) => {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
             this.props.getMensajes()
         })
@@ -47,10 +47,15 @@ class Chat extends React.Component {
         socket.off()  //Cancela todos los eventos que pueda tener el socket
     }
 
+    msgToAnother(mensaje){
+        //Funcion pasada como callBack en el anterior método. Envía el msg Broadcast dsps de que se guardo
+        socket.emit('msgToAnother', mensaje)
+    }
+
     agregarMensaje(mensaje){
         //Usar sync y await para que la segunda función espere a la primera
-        this.props.addMsg(mensaje)
-        socket.emit('msgToAnother')
+        this.props.addMsg(mensaje, this.msgToAnother)
+        //socket.emit('msgToAnother', mensaje)
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -70,10 +75,12 @@ class Chat extends React.Component {
         this.setState(newState)
     }
 
-    static getDerivedStateFromProps(nextProps, prevState){
-        if(prevState.mensajes != nextProps.mensajes){
+    static getDerivedStateFromProps(props, state){
+        if(state.mensajes != props.mensajes){
+            console.log('Hay nuevos Props')
             return {
-                mensajes: nextProps.mensajes
+                ...state,
+                mensajes: props.mensajes
             }
         }
         return null
@@ -81,9 +88,10 @@ class Chat extends React.Component {
 
     ifDisconnected() {  
         console.log("state.conectado: "+this.state.conectado)
-        if(!this.state.conectado){  //Si no está conectado --> recargo la página
+        /*if(!this.state.conectado){  ///Si no está conectado --> recargo la página
             this.recargar()
-        }
+        } */
+        this.recargar()
     }
 
     recargar(){
@@ -93,7 +101,7 @@ class Chat extends React.Component {
 
     render() {
         const onBlur = () => {
-            socket.disconnect()
+           // socket.disconnect() Esto rompe todo, entender que a veces la pantalla se ve pero esta onBlur (PC)
         }
 
         let mensajes = this.state.mensajes
@@ -102,14 +110,18 @@ class Chat extends React.Component {
                 <div className="row mt-4">
                     <div className='col-12 bg-white text-dark'>
                         {mensajes.map((e, i) => 
-                        <div key={i}>
-                            <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
+                        <div key={i} className={(this.props.idpersona == e.persona.id)? 
+                        'd-flex justify-content-end': 'd-flex justify-content-start'}>
+                            <div style={(this.props.idpersona == e.persona.id)? 
+                            {textAlign: 'end'}: {textAlign: 'start'}} >
+                                <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
                             <br />
-                            {e.mensaje}
+                                {e.mensaje}
+                            </div>
                         </div>)}
                     </div>
-                    <form className='form-control' onSubmit={this.submit.bind(this)}>
-                        <div className="col-sm-6">
+                    <form className='form-control justify-content-center' onSubmit={this.submit.bind(this)}>
+                        <div className="col-sm-12">
                             <label className="form-label">Mensajes del servidor</label>
                             <textarea id="mensaje" rows="1" cols="1" className="form-control"
                                 value={this.state.mensaje} onChange={this.setMensaje.bind(this)} />

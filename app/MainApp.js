@@ -22,7 +22,7 @@ class MainApp extends React.Component{
                                                                         //Este this apunta al contexto IcbApp --> Hay profile
 
         return(
-            <div className="col-sm-9 col-md-9 col-lg-9 mainApp gx-2 gy-2">
+            <div className="col-sm-9 col-md-9 col-lg-9 mainApp gx-xs-0 gx-sm-3">
                <Choose>
                    <When condition={this.props.children==null}> 
                        <ComoFunciona/>                         

@@ -19,8 +19,8 @@ module.exports = {
             socket.on('mensaje', (idper, mensaje) => {
               io.to(id).emit('mensajes', {idper, mensaje});
             })  
-            socket.on('msgToAnother', () => {
-              socket.broadcast.emit('msgBroadcast')
+            socket.on('msgToAnother', (mensaje) => {
+              socket.broadcast.emit('msgBroadcast', mensaje)
             })
             socket.on('disconnect', () => {
               //io.to(id).emit('mensajes', {servidor: "Servidor", mensaje: `${nombre} ha abandonado la sala` });
