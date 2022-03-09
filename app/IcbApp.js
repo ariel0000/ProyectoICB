@@ -60,9 +60,7 @@ class IcbApp extends React.Component {
                 </div>
                 <div id="dialog" className="row">
                     <div className="container">
-                        <br />
-                        <br />
-                        <p>¿Donde estoy aquí?</p>
+
                     </div>
                 </div>
             </div>

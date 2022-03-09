@@ -137,6 +137,10 @@ class Menu extends React.Component{
             newState = update(this.state, {mostrarMenu: {$set: false}})
             this.setState(newState)
         }
+        else{  //Si no es un celu tampoco mostramos el menú
+            newState = update(this.state, {mostrarMenu: {$set: false}})
+            this.setState(newState) 
+        }
     }
 
     render(){

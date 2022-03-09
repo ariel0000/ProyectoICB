@@ -80,10 +80,20 @@ class Chat extends React.Component {
             console.log('Hay nuevos Props')
             return {
                 ...state,
-                mensajes: props.mensajes
+                mensajes: props.mensajes.reverse()
             }
         }
         return null
+    }
+
+    componentDidUpdate(prevsProps, prevState, snapshot){
+        //Utilizo esto solo para asegurarme que se scrolleo hasta el final
+        this.scrollearHastaUltimoElemento();
+    }
+
+    scrollearHastaUltimoElemento(){
+        //Se encarga de correr el chat hasta el último elemento
+        document.getElementById('caja-chat').scrollIntoView();
     }
 
     ifDisconnected() {  
@@ -106,27 +116,30 @@ class Chat extends React.Component {
 
         let mensajes = this.state.mensajes
         return (
-            <div className="infoApp container-fluid">
-                <div className="row mt-4">
-                    <div className='col-12 bg-white text-dark'>
+            <div className="infoApp container-fluid" id='ChatComponent'>
+                <div className="row mt-1" >
+                    <div className='col-12 bg-info p-2 caja-chat'>
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
-                        'd-flex justify-content-end': 'd-flex justify-content-start'}>
+                        'd-flex justify-content-end': 'd-flex justify-content-start' }>
                             <div style={(this.props.idpersona == e.persona.id)? 
-                            {textAlign: 'end'}: {textAlign: 'start'}} >
+                            {textAlign: 'end'}: {textAlign: 'start'}} 
+                            className={(this.props.idpersona == e.persona.id)?
+                            "mensaje-mio p-1 mb-1": "mensaje p-1 mb-1"} >
                                 <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
                             <br />
                                 {e.mensaje}
                             </div>
-                        </div>)}
+                        </div>)} 
+                        <div id='caja-chat'></div>{/* Uso este div para scrollear automáticamente*/}
                     </div>
-                    <form className='form-control justify-content-center' onSubmit={this.submit.bind(this)}>
+                    <form className='form-control justify-content-center bg-info' onSubmit={this.submit.bind(this)}>
                         <div className="col-sm-12">
-                            <label className="form-label">Mensajes del servidor</label>
+                           {/* <label className="form-label">Mensajes del servidor</label> */ }
                             <textarea id="mensaje" rows="1" cols="1" className="form-control"
                                 value={this.state.mensaje} onChange={this.setMensaje.bind(this)} />
+                                <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                         </div>
-                        <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                     </form>
                     <WindowFocusHandler beginFocus={this.ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
                 </div>

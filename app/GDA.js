@@ -84,8 +84,9 @@ class GDA extends React.Component{
         })
         .then(res => res.json())
         .then(json => {
-            let newState = update(this.state, {mensajes: {$splice: [[0, 0, json.body]]}})
-            this.setState(newState)
+            let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
+            let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
+            this.setState(newState) //Cambia el orden de los mensajes
             callbackF()
             
         })
@@ -109,17 +110,13 @@ class GDA extends React.Component{
 
     render() {
         return(
-            <div className="infoApp">
-                <blockquote className="text-center">
+            <div className="infoApp cien-por-cien">
+                <blockquote className="text-center mb-1 pb-1 mt-0">
                     <h6 className="text-white">Chat del GDA</h6>
                 </blockquote>
                 <div className="container-fluid">
-        {/*    <div className="row justify-content-center align-items-center mt-2"> //Por ahora no le encuentro sentido
-                        <div className="col-3 gx-2"><button className="btn btn-primary text-white">Editar GDA</button></div>
-                        <div className="col-3 gx-2"><button className="btn btn-info text-white">Editar Participantes</button></div>
-                </div> --> */}
-                    <div className="row justify-content-center align-items-center mt-2">
-                        <div className="col-12 gx-2">
+                    <div className="row justify-content-center align-items-center mt-1">
+                        <div className="col-sm-9 col-xs-12 gx-2">
                             <Chat idpersona={this.props.profile.id} 
                                 id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
                                 getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
