@@ -38,6 +38,7 @@ class IcbApp extends React.Component {
              },
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")
+                this.setState(update(this.state, {profile: {$set: null}}))
                 browserHistory.push('/MainApp/comoFunciona')
             })
         }

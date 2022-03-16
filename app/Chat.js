@@ -10,7 +10,8 @@ class Chat extends React.Component {
         this.state = {
             mensajes: [],
             mensaje: "",
-            conectado: true
+            conectado: true,
+            pagina: 0
         }
     }
 
@@ -28,7 +29,7 @@ class Chat extends React.Component {
 
         socket.on('msgBroadcast', (mensaje) => {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
-            this.props.getMensajes()
+            this.consultarUltimoMensaje(mensaje)
         })
 
         socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
@@ -43,19 +44,23 @@ class Chat extends React.Component {
     }
 
     componentWillUnmount(){
-        console.log('Server desconectado')
+    //    console.log('Server desconectado')
         socket.off()  //Cancela todos los eventos que pueda tener el socket
     }
 
     msgToAnother(mensaje){
-        //Funcion pasada como callBack en el anterior método. Envía el msg Broadcast dsps de que se guardo
+        //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
         socket.emit('msgToAnother', mensaje)
     }
 
     agregarMensaje(mensaje){
         //Usar sync y await para que la segunda función espere a la primera
         this.props.addMsg(mensaje, this.msgToAnother)
-        //socket.emit('msgToAnother', mensaje)
+    }
+
+    consultarUltimoMensaje(mensaje){
+        //Desde acá consulto los props para recuperar el último mensaje recibido
+        this.props.lastMsj(mensaje)
     }
 
     setMensaje(e){  //Actualiza el mensaje
@@ -77,10 +82,9 @@ class Chat extends React.Component {
 
     static getDerivedStateFromProps(props, state){
         if(state.mensajes != props.mensajes){
-            console.log('Hay nuevos Props')
             return {
                 ...state,
-                mensajes: props.mensajes.reverse()
+                mensajes: props.mensajes.reverse() //Los msjs se cargan del último al primero --> reverse
             }
         }
         return null
@@ -88,12 +92,27 @@ class Chat extends React.Component {
 
     componentDidUpdate(prevsProps, prevState, snapshot){
         //Utilizo esto solo para asegurarme que se scrolleo hasta el final
-        this.scrollearHastaUltimoElemento();
+
+        if(this.state.pagina == 0){
+            //Solo si la página es 0 scrolleo hasta el último elemento
+            this.scrollearHastaUltimoElemento();
+        }
     }
 
     scrollearHastaUltimoElemento(){
         //Se encarga de correr el chat hasta el último elemento
         document.getElementById('caja-chat').scrollIntoView();
+    }
+
+    onScroll(e){
+        //Tengo que averiguar si el scroll llegó al tope para traer nuevos mensajes
+        let distanciaAlTope = e.target.scrollTop
+        if(distanciaAlTope <= 5){
+            this.props.getMensajes(this.state.pagina+1);
+          //  e.target.scrollTop = 1100
+            let newState = update(this.state, {pagina: {$set: this.state.pagina+1}})
+            this.setState(newState)
+        }
     }
 
     ifDisconnected() {  
@@ -118,7 +137,7 @@ class Chat extends React.Component {
         return (
             <div className="infoApp container-fluid" id='ChatComponent'>
                 <div className="row mt-1" >
-                    <div className='col-12 bg-info p-2 caja-chat'>
+                    <div className='col-12 bg-info p-2 caja-chat' onScroll={this.onScroll.bind(this)}>
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
                         'd-flex justify-content-end': 'd-flex justify-content-start' }>

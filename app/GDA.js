@@ -14,7 +14,7 @@ class GDA extends React.Component{
     }
 
     componentDidMount(){
-        this.consultarMensajes()
+        this.consultarMensajes(0)
         this.cargarGDA()
     }
 
@@ -40,18 +40,37 @@ class GDA extends React.Component{
         })
     }
 
-    consultarMensajes(){
+    consultarMensajes(nPage){
         //tengo que cargar los mensajes que corresponden a este GDA. 
         // El componente CHAT se encargará de consultar esta función pasada como prop
-        let newState
-        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber=0&pageSize=5',
+        let newState, newMsjs
+        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
             response=> {
-                newState = update(this.state, {mensajes: {$set: response.body}})
+                if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
+                    newMsjs = this.state.mensajes.reverse() //Lo doy vuelta porque dsps se vuelve 
+                    // a dar vuelta solo
+                }
+                newMsjs = this.state.mensajes.concat(response.body)
+                newState = update(this.state, {mensajes: {$set: newMsjs}})
                 this.setState(newState)
-        },
+            },
             error=> {
                 console.log('Error: '+error.message)
-        })
+            })
+    }
+
+    consultarUltimoMensaje(mensaje){
+        //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
+        let newMensajes = this.state.mensajes.concat(mensaje).reverse()
+        let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
+        this.setState(newState)
+        /* APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+0+'&pageSize=1',
+        response=> {
+            callbackF(response.body)
+        },
+        error=> {
+            console.log('Error: '+error.message)
+        }) */
     }
 
     agregarMensaje(mensaje, callbackF){
@@ -87,7 +106,7 @@ class GDA extends React.Component{
             let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
             let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
             this.setState(newState) //Cambia el orden de los mensajes
-            callbackF()
+            callbackF(json.body) //el callback incluye el mensaje tal cual es guardado en la BdD
             
         })
         .catch(err => {
@@ -120,7 +139,7 @@ class GDA extends React.Component{
                             <Chat idpersona={this.props.profile.id} 
                                 id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
                                 getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
-                                addMsg={this.agregarMensaje.bind(this)} />
+                                addMsg={this.agregarMensaje.bind(this)} lastMsj={this.consultarUltimoMensaje.bind(this)} />
                         </div>
                     </div>
                 </div>
