@@ -49,6 +49,12 @@ class AgregarPersona extends React.Component{
                 this.setState(newState)
             },
             error => {
+                if (error.status == 401){
+                    alert("Debe iniciar sesión para poder entrar aquí")
+                    window.localStorage.removeItem("token")
+                    window.localStorage.removeItem("codigo")
+                    window.location = ('/')
+                }
                 document.getElementById("errorCamp").innerText = error.message
             })
             }

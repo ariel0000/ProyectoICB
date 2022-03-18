@@ -26,8 +26,8 @@ class VerGda extends React.Component {
         error => {
             if (error.status == 401) {
                 alert("Debe iniciar sesión para poder entrar aquí")
-                browserHistory.push("/MainApp")
                 console.log('Error, no hay usuario autenticado')
+                window.location = ('/')
             }
             else {
                 document.getElementById("errorField").innerText = "Error: " + error.message
@@ -202,7 +202,7 @@ class VerGda extends React.Component {
                             <For each="participante" index="index" of={gda.participantes}>
                                 <div className="col-auto m-1" key={participante.id} title={participante.id}>
                                     <button type="button" className={participante.id==gda.lider.id? "btn btn-danger text-light dropdown-toggle" : 
-                                        "btn btn-info text-light dropdown-toggle"} type="button" data-bs-toggle="dropdown"
+                                        "btn btn-info text-light dropdown-toggle"} data-bs-toggle="dropdown"
                                         id="dropdownMenuButton1">
                                         {participante.nombre}&nbsp;{participante.apellido}
                                     </button>

@@ -132,8 +132,7 @@ class CrearGDA extends React.Component{
                 document.getElementById("errorField").innerText = "Error: "+error.message
                 if(error.status == 401){
                     alert("Debe iniciar sesión para realizar estas operaciones")
-                    browserHistory.push("/MainApp/bienvenido")
-                    console.log('Error, no hay usuario autenticado')
+                    window.location = ('/')
                 }
                 document.getElementById("errorField").innerText = "Error: "+error.message
             })

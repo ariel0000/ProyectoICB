@@ -18,6 +18,7 @@ app.use(bodyParser.json({limit: '10mb'}));
 app.use('/css_min', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
 app.use('/css', express.static(__dirname + '/public/resources/css'))
 app.use('/js', express.static(__dirname + '/public/resources/js'));
+app.use('/img', express.static(__dirname + '/public/resources/img'));
 
 app.use(require('webpack-dev-middleware')(compiler, {
     index: true,

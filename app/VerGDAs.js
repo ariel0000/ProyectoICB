@@ -42,8 +42,7 @@ class VerGDAs extends React.Component {
                     alert("Debe iniciar sesión para poder entrar aquí")
                     window.localStorage.removeItem("token")
                     window.localStorage.removeItem("codigo")
-                    browserHistory.push("/MainApp")
-                    console.log('Error, no hay usuario autenticado')
+                    window.location = ('/')
                 }
                 else {
                     document.getElementById("errorField").innerText = "Error: " + error.message
@@ -177,7 +176,6 @@ class VerGDAs extends React.Component {
                                 </Otherwise>
                            </Choose>
                         </blockquote>
-                        <br/>
                         <blockquote className="text-center">
                             <h6 className="text-white" id="errorField"></h6>
                         </blockquote>

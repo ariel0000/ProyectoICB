@@ -19,7 +19,6 @@ class MainApp extends React.Component{
     render(){
         let randomId = uuidv4();            
         let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile, key: randomId});
-                                                                        //Este this apunta al contexto IcbApp --> Hay profile
 
         return(
             <div className="col-sm-9 col-md-9 col-lg-9 mainApp gx-xs-0 gx-sm-3">

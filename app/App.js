@@ -10,7 +10,6 @@ import InfoGDA from './InfoGDA'
 import InfoRedes from './InfoRedes'
 import Bienvenido from './Bienvenido'
 import ComoFunciona from './ComoFunciona'
-import Mensajeria from './Mensajeria'
 import CerrarSesion from './CerrarSesion'
 import CrearGDA from './CrearGDA'
 import VerGDAs from './VerGDAs'
@@ -34,9 +33,9 @@ render((
                 <Route path="infoGDA" component={InfoGDA} tab="infoGDA" />
                 <Route path="infoRedes" component={InfoRedes} tab="infoRedes" />
                 <Route path="bienvenido" component={Bienvenido} tab="bienvenido" />
-                <Route path="mensajeria" component={Mensajeria} tab="mensajeria" />
                 <Route path="cerrarSesion" component={CerrarSesion} tab="cerrarSesion" />
                 <Route path="crearGda" component={CrearGDA} tab="crearGda" />
+          {/*      <Route path="nuevaNoticia" component={CrearNoticia} tab="crearNoticia" /> */}
                 <Route path="verGDAs"  component={VerGDAs} tab="verGDAs" >
                     <Route path=":gda" component={VerGda} tab="verGDA" >
                         <Route path="addOne" component={(params) => <Modal><AgregarNuevaPersona {...params}/> </Modal>} tab="addOne" />

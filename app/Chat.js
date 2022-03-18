@@ -34,7 +34,7 @@ class Chat extends React.Component {
 
         socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
             console.log('Failed to connect to server');
-            this.props.reload()
+            this.props.reload() //Causa la carga y la reconexción
         });
 
         socket.on('disconnect', () => {
@@ -109,7 +109,7 @@ class Chat extends React.Component {
         let distanciaAlTope = e.target.scrollTop
         if(distanciaAlTope <= 5){
             this.props.getMensajes(this.state.pagina+1);
-          //  e.target.scrollTop = 1100
+            e.target.scrollTop = 1650
             let newState = update(this.state, {pagina: {$set: this.state.pagina+1}})
             this.setState(newState)
         }

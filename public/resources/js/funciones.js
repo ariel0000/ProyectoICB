@@ -12,6 +12,7 @@ module.exports = {
         io = socketio(servidor, options)
         io.on('connection', socket => {
             let id
+            socket.sendBuffer = []
             socket.on('conectado', (idChat) => {
               id = idChat
               socket.join(id)

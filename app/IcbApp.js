@@ -22,6 +22,7 @@ class IcbApp extends React.Component {
         let codigo = window.localStorage.getItem("codigo")
         if(token == null){
             //No ha iniciado sesión --> Nose, xD. No redirigo a Iniciar Sesión, pero podría redirigir a la explicación
+            this.setState(update(this.state, {profile: {$set: null}}))
             browserHistory.push('/MainApp/comoFunciona')
         }
         else{  //Si el token no es nulo --> Consulto el API para ver si el token y el código son válidos
@@ -39,7 +40,7 @@ class IcbApp extends React.Component {
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")
                 this.setState(update(this.state, {profile: {$set: null}}))
-                browserHistory.push('/MainApp/comoFunciona')
+                window.location = ('/')
             })
         }
     }
@@ -53,10 +54,17 @@ class IcbApp extends React.Component {
         }
         return (
             <div className="container-fluid px-2 div-principal">
-                <Toolbar perfil={this.state.profile}/>
-
+                {this.state.profile != null?
+                    <Toolbar perfil={this.state.profile} />
+                :
+                    <Toolbar />
+                }
                 <div className="row gx-0">  {/* En la misma 'row' tengo al Menú y al MainApp */}
+                {this.state.profile != null?
                     <Menu esCelu={esCelu} perfil={this.state.profile} />
+                    :
+                    <Menu esCelu={esCelu} />
+                }
                     {childs}  {/* Esta incluído MainApp */}
                 </div>
                 <div id="dialog" className="row">

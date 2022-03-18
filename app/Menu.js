@@ -193,7 +193,8 @@ class Menu extends React.Component{
                         <a className="nav-link active" href="#" onClick={this.desplegarNoticias.bind(this)} 
                         aria-disabled="true">Noticias</a>
                         {(rol > 1)?  //Es usuario nivel 2 o más
-                        <Submenu item="Registrar Noticia" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}/>
+                        <Submenu item="Registrar Noticia" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}
+                        enlace="/MainApp/nuevaNoticia" />
                         :
                         <div></div> }
                         <Submenu item="Ver Noticias" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}/>
@@ -271,7 +272,7 @@ class Menu extends React.Component{
 }
 
 Menu.propTypes = {
-    //perfil.nombre: PropTypes.string.isRequired  //No lo necesitamos (es para vender humo)
+    //perfil.nombre: PropTypes.string.isRequired  //No lo necesitamos
 }
 
 Menu.defaultProps = {

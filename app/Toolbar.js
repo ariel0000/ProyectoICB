@@ -24,7 +24,7 @@ class Toolbar extends React.Component {
                 <div className="row toolbar">
                     <div className="col-xs-12 col-sm-12 col-md-12">  
                     
-                        <div className="d-flex justify-content-end text-white">
+                        <div className="d-flex justify-content-end text-primary bg-white">
                             <div className="me-auto p-2 bd-highlight order-1 order-sm-0 order-md-0" >
                                 <label htmlFor={"notificador"} className="btn btn-info text-white">
                                     <FaBell />
@@ -32,9 +32,12 @@ class Toolbar extends React.Component {
                                 <input href="#" className="d-none" accept=".gif, .jpg, .png, .bmp" type="file" 
                                 id={"notificador"} ></input>
                             </div>
-                            <div className="p-2 bd-highlight order-2 order-sm-2 order-md-2">
+                            <div className="me-auto p-2 order-sm-1 order-2 order-md-1" >
+                                <img src="/img/IcbBanner.png" alt="Banner" style={{maxWidth: 100+'px'}} />
+                            </div>
+                            <div className="p-2 bd-highlight order-3 order-sm-2 order-md-2">
                             <Choose>
-                                <When condition={this.props.perfil !== undefined}>
+                                <When condition={this.props.perfil != undefined}>
                                     <p>
                                         Hola {this.props.perfil.nombre} !
                                     </p>
