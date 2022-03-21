@@ -105,7 +105,7 @@ class AgregarPersona extends React.Component{
                     <div className="row align-items-center justify-content-center" >
                         <div className="col-12 col-md-8 mt-2 justify-content-center align-items-center">
                             <blockquote className="text-center">
-                                <h6 id="errorCamp">{this.props.errorLabel}</h6>
+                                <h6 id="errorCamp" className='bg-danger rounded-2'>{this.props.errorLabel}</h6>
                             </blockquote>
                         </div>
                     </div>
