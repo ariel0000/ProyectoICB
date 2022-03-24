@@ -8,9 +8,12 @@ class CrearNoticia extends React.Component{
         this.state = {
             titulo: "",
             subtitulo: "",
-            imagen: "",
+            image: "",
+            imagenUrl: "",
+            deleteUrl: "",
             fechaExp: "",
-            piePagina: ""
+            piePagina: "",
+            vistaPrevia: false
         }   
     }
 
@@ -37,7 +40,7 @@ class CrearNoticia extends React.Component{
             preview.append(img)
 
             let newState = update(this.state,{
-            image: {$set: result}
+            image: {$set: file}
         })
             this.setState(newState)
         }
@@ -53,9 +56,33 @@ class CrearNoticia extends React.Component{
         //Actualiza título, subtítulo, fechaExp e información al pie de página
     }
 
+    verVistaPrevia(e){
+        //Función que se encarga de subir la imagen (si hay) a ImgBB y desplegar la vista previa de la noticia
+       // var reqBody = "--location --request --form"+this.state.imagen
+        var formData = new FormData()
+        formData.append('image', this.state.image);
+        fetch('https://api.imgbb.com/1/upload?&key=2130771d0b2d02b719fc0734533ca7d5', {
+            method: 'POST',
+            body: formData
+        })
+        .then(res => res.json())
+        .then(json => {
+            let urlImagen = json.data.url
+            let newState = update(this.state, {imagenUrl: {$set: urlImagen}, vistaPrevia: {$set: true},
+            deleteUrl: {$set: json.data.deleteUrl}})
+            this.setState(newState)
+        })
+        .catch(err => {
+            console.log("Error al cargar imagen: ", err.message);
+        })
+    }
+
     render(){
         return(
+            
             <div className="infoApp container-fluid">
+                <Choose>
+                <When condition={!this.state.vistaPrevia} > 
                 <h4>Para crear la noticia necesita completar los campos obligatorios. 
                     Los mismos estan indicados con un *
                 </h4>
@@ -98,9 +125,32 @@ class CrearNoticia extends React.Component{
                 </div>
                 <div className="row justify-content-center mt-2">
                     <div className="col-md-7 col-9">
-                        <button className="btn btn-primary">Ver Vista Previa</button>
+                        <button className="btn btn-primary" onClick={this.verVistaPrevia.bind(this)}>Ver Vista Previa</button>
                     </div>
                 </div>
+                </When>
+                <Otherwise>
+                    <h4>{this.state.titulo}</h4>
+                    <blockquote className="text-center">
+                        <h6 className="text-white bg-danger" id="errorField"></h6>
+                    </blockquote>
+                    <div className="row justify-content-center mb-1">
+                        <div className="col-md-7 col-9" >
+                            {this.state.subtitulo}
+                        </div>
+                    </div>
+                    <div className="row justify-content-center mb-1">
+                        <div className="col-md-7 col-9" >
+                            <img className="img-fluid rounded" alt="..." src={this.state.imagenUrl} />
+                        </div>
+                    </div>
+                    <div className="row justify-content-center mb-1">
+                        <div className="col-md-7 col-9" >
+                            {this.state.piePagina}
+                        </div>
+                    </div>
+                </Otherwise>
+                </Choose>
             </div>
         )
     }
