@@ -55,6 +55,12 @@ class GDA extends React.Component{
                 this.setState(newState)
             },
             error=> {
+                if (error.status == 401){
+                    alert("Debe iniciar sesión para poder entrar aquí")
+                    window.localStorage.removeItem("token")
+                    window.localStorage.removeItem("codigo")
+                    window.location = ('/')
+                }
                 console.log('Error: '+error.message)
             })
     }
@@ -131,7 +137,7 @@ class GDA extends React.Component{
         return(
             <div className="infoApp cien-por-cien">
                 <blockquote className="text-center mb-1 pb-1 mt-0">
-                    <h6 className="text-white">Chat del GDA</h6>
+                    <h6 className="text-white bg-danger rounded">Chat del GDA</h6>
                 </blockquote>
                 <div className="container-fluid">
                     <div className="row justify-content-center align-items-center mt-1">

@@ -19,6 +19,7 @@ import AgregarNuevaPersona from './AgregarPersona'
 import Modal from './Modal'
 import GDA from './GDA'
 import CrearNoticia from './CrearNoticia'
+import VerNoticias from './VerNoticias'
 
 var createBrowserHistory = require("history").createBrowserHistory
 
@@ -37,6 +38,7 @@ render((
                 <Route path="cerrarSesion" component={CerrarSesion} tab="cerrarSesion" />
                 <Route path="crearGda" component={CrearGDA} tab="crearGda" />
                 <Route path="nuevaNoticia" component={CrearNoticia} tab="crearNoticia" />
+                <Route path="noticias" component={VerNoticias} tab="Noticias" />
                 <Route path="verGDAs"  component={VerGDAs} tab="verGDAs" >
                     <Route path=":gda" component={VerGda} tab="verGDA" >
                         <Route path="addOne" component={(params) => <Modal><AgregarNuevaPersona {...params}/> </Modal>} tab="addOne" />

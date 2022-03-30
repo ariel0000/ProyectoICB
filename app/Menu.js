@@ -197,9 +197,11 @@ class Menu extends React.Component{
                         enlace="/MainApp/nuevaNoticia" />
                         :
                         <div></div> }
-                        <Submenu item="Ver Noticias" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}/>
+                        <Submenu item="Ver Noticias" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}
+                        enlace="/MainApp/noticias" />
                         
-                        <Submenu item="Información" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}/>
+                        <Submenu item="Información" active={this.state.noticias} cerrarMenu={this.cerrarMenu.bind(this)}
+                        enlace="/MainApp/directo_A_Japón" />
                     </li>
 
                     <li className={this.state.mostrarMenu ? "" : "pato"}>

@@ -36,7 +36,7 @@ class IcbApp extends React.Component {
                 error => {
                     alert("Error al consultar usuario"+error.message);  //Error al consultar "obtenerDatosPorCódigo"
                 })  
-             },
+            },
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")
                 this.setState(update(this.state, {profile: {$set: null}}))

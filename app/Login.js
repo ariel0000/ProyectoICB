@@ -21,7 +21,7 @@ class Login extends React.Component{
             this.setState(update(this.state, {[field] : {$set: value}
             }))
         }
-        this.refs.submitBtnLabel.innerHTM = ""  //Quito los errores marcados porque ya escribí de nuevo
+        this.refs.submitBtnLabel.innerHTML = ""  //Quito los errores marcados porque ya escribí de nuevo
         this.setState(update(this.state, {
             [field] : {$set: value}
         }))
@@ -41,7 +41,7 @@ class Login extends React.Component{
 
         }, error => {
             this.refs.submitBtnLabel.innerHTML = error.message
-            this.refs.submitBtnLabel.className = 'shake animated'
+            this.refs.submitBtnLabel.className = 'shake animated bg-danger text-white'
             console.log("Error en la autenticación")
         })
     }
@@ -54,7 +54,7 @@ class Login extends React.Component{
                 </blockquote>
                 <br />
                 <blockquote>
-                    <h6 className="text-danger" ref="submitBtnLabel"></h6>
+                    <h6 className="text-white" ref="submitBtnLabel"></h6>
                 </blockquote>
                 <div className="row justify-content-center align-items-center gx-2" >
                     <div className="col-sm-8 col-12 signup-form infoApp">
@@ -71,14 +71,14 @@ class Login extends React.Component{
                                 onChange={this.handleInput.bind(this)} />
                             <label ref="passwordLabel" htmlFor="passwordLabel"></label>
 
-                            <button className="btn btn-primary btn-lg" id="submitBtn" className="form-control btn btn-success mb-2"
+                            <button className="btn btn-primary btn-lg form-control mb-2" id="submitBtn"
                                 onClick={this.login.bind(this)}>Iniciar Sesión</button>
-                            <label ref="submitBtnLabel" id="submitBtnLabel" htmlFor="submitBtn"
+                          {/* }  <label ref="submitBtnLabel" id="submitBtnLabel" htmlFor="submitBtn"
                                 className="shake animated hidden mb-2"></label>
                             <p className="bg-danger user-test">
                                 Crea un usuario o usa el usuario
                                 <strong> juan/1234</strong>
-                            </p>
+                            </p> */ }
                             <p className="text-light">¿No tienes una cuenta? <Link itemProp="url" to="/MainApp/signup" className="text-white">
                                 Registrarse
                                 </Link>
