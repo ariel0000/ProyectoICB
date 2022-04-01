@@ -22,7 +22,7 @@ class IcbApp extends React.Component {
         let codigo = window.localStorage.getItem("codigo")
         if(token == null){
             //No ha iniciado sesión --> Nose, xD. No redirigo a Iniciar Sesión, pero podría redirigir a la explicación
-            this.setState(update(this.state, {profile: {$set: null}}))
+            this.setState(update(this.state, {profile: {$set: undefined}}))
             browserHistory.push('/MainApp/comoFunciona')
         }
         else{  //Si el token no es nulo --> Consulto el API para ver si el token y el código son válidos
@@ -39,7 +39,7 @@ class IcbApp extends React.Component {
             },
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")
-                this.setState(update(this.state, {profile: {$set: null}}))
+                this.setState(update(this.state, {profile: {$set: undefined}}))
                 window.location = ('/')
             })
         }

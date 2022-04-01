@@ -26,7 +26,7 @@ var createBrowserHistory = require("history").createBrowserHistory
 render((
     <Router history={browserHistory}>
         <div id="dialog" />
-        <Route path="/" component={props => <IcbApp {...props} /> } >
+        <Route path="/" component={props => <IcbApp {...props} /> } > //Esta modificación creo que fue para el reload
             <Route path="MainApp" component={MainApp} >  /*Puede reutilizar otros componentes hijos*/
                 <IndexRoute component={Bienvenido} tab="bienvenido" />  //Nose que es tab
                 <Route path="/reload" component={null} key="reload" />

@@ -8,7 +8,7 @@ class MainApp extends React.Component{
     constructor(){
         super(...arguments)
         this.state={
-            profile: []
+
         }
     }
 
