@@ -238,10 +238,10 @@ class CrearNoticia extends React.Component {
                             </div>
                         </div>
                         <div className="row justify-content-center mt-2">
-                            <div className="col-md-3 col-auto">
+                            <div className="col-md-3 col-auto mt-1">
                                 <button className="btn btn-primary" onClick={this.salirVistaPrevia.bind(this)}>Salir Vista Previa</button>
                             </div>
-                            <div className="col-md-3 col-auto mt-2">
+                            <div className="col-md-3 col-auto mt-1">
                                 <button className="btn btn-primary" onClick={this.publicarNoticia.bind(this)}>
                                         Publicar Noticia
                                 </button>

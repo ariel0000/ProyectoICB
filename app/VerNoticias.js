@@ -1,6 +1,7 @@
 import React from "react"
 import APIInvoker from './utils/APIInvoker'
 import update from 'react-addons-update'
+import { browserHistory } from "react-router"
 
 class VerNoticias extends React.Component {
     constructor(props) {
@@ -38,20 +39,46 @@ class VerNoticias extends React.Component {
         }
     }
 
+    borrarNoticia(e) {
+        let errorField = document.getElementById("errorField")
+        errorField.innerHTML = ""
+        let div_carousel = document.getElementById('soyElCarousel')
+        let elementoActivo = div_carousel.getElementsByClassName('carousel-item active')
+        let idNoticia = elementoActivo[0].getAttribute('name')
+        let tituloNoticia = elementoActivo[0].title
+        console.log("ID Noticia: "+idNoticia)
+        var r = confirm("¿Está seguro de borrar la noticia: '" + tituloNoticia + "'")
+        if (r === true) {
+            APIInvoker.invokeDELETE('/icb-api/v1/noticia/' + idNoticia, response => {
+                browserHistory.push('/MainApp/noticias')
+            },
+            error => {
+                let errorField = document.getElementById("errorField")
+                if (error.status == 401) {
+                    alert("Debe iniciar sesión para poder entrar aquí")
+                    window.localStorage.removeItem("token")
+                    window.localStorage.removeItem("codigo")
+                    window.location = ('/')
+                }
+                errorField.innerHTML = error.message
+            })
+        }
+    }
+
     render(){
         let noticias = this.state.noticias
         let rol = this.props.profile.rol.nivel
         return(
         <div className="infoApp container-fluid">
             <blockquote className="text-center">
-                <h6 className="text-white bg-danger" id="errorField"></h6>
+                <h6 className="text-white bg-danger rounded" id="errorField"></h6>
                 </blockquote>
                 <div className="row justify-content-center mb-1">
                     <div className="col-9 col-md-7">
-                        <div id="carouselExampleControls" className="carousel slide" data-bs-ride="carousel">
+                        <div id="carouselExampleControls" className="carousel slide carousel-fade" data-bs-ride="carousel">
                             <div className="carousel-inner" id="soyElCarousel">
                                 {noticias.map((noticia, i) =>
-                                <div key={i} className="carousel-item">
+                                <div key={i} name={noticia.id} title={noticia.titulo} className="carousel-item" data-bs-interval="15000">
                                     <h4>{noticia.titulo}</h4>
                                     <h6 className="mt-1">{noticia.subtitulo}</h6>
                                     <img src={noticia.url_imagen} alt="..." className="d-block w-100" />
@@ -73,8 +100,8 @@ class VerNoticias extends React.Component {
                 {(rol > 2)?
                 <div className="row justify-content-center">
                     <div className="col-9 col-md-7">
-                        <button className="btn btn-info text-white">
-                            Modo edición
+                        <button className="btn btn-danger text-white" onClick={this.borrarNoticia.bind(this)}>
+                            Borrar
                         </button> 
                     </div>
                 </div>
