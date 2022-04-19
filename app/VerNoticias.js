@@ -81,8 +81,17 @@ class VerNoticias extends React.Component {
                                 <div key={i} name={noticia.id} title={noticia.titulo} className="carousel-item" data-bs-interval="15000">
                                     <h4>{noticia.titulo}</h4>
                                     <h6 className="mt-1">{noticia.subtitulo}</h6>
-                                    <img src={noticia.url_imagen} alt="..." className="d-block w-100" />
+                                    <Choose>
+                                    <When condition={noticia.url_imagen != undefined}>
+                                    <img src={noticia.url_imagen} alt="...cargando" className="d-block w-100 mt-1 mb-2" />
                                     <h6 className="mt-1">{noticia.pie_de_pagina}</h6>
+                                    </When>
+                                    <Otherwise>
+                                    <div className="spinner-border text-primary" role="status">
+                                        <span className="visually-hidden">Loading...</span>
+                                    </div>
+                                    </Otherwise>
+                                    </Choose>
                                 </div>
                                 )}
                             </div>

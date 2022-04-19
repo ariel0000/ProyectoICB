@@ -127,7 +127,6 @@ class Chat extends React.Component {
         this.props.reload()
     }
 
-
     render() {
         const onBlur = () => {
            // socket.disconnect() Esto rompe todo, entender que a veces la pantalla se ve pero esta onBlur (PC)
