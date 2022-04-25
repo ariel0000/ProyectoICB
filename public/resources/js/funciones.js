@@ -11,17 +11,20 @@ module.exports = {
           }
         io = socketio(servidor, options)
         io.on('connection', socket => {
-            let id
+            let rooms = []
             socket.sendBuffer = []
-            socket.on('conectado', (idChat) => {
-              id = idChat
-              socket.join(id)
+            socket.on('conectado', (idChats) => {
+
+              rooms = idChats
+              socket.join(rooms)
             })
-            socket.on('mensaje', (idper, mensaje) => {
-              io.to(id).emit('mensajes', {idper, mensaje});
+            socket.on('mensaje', (idper, mensaje, idChat) => {
+              io.to(idChat).emit('mensajes', {idper, mensaje});
+             
             })  
-            socket.on('msgToAnother', (mensaje) => {
-              socket.broadcast.emit('msgBroadcast', mensaje)
+            socket.on('msgToAnother', (mensaje, idChat) => {
+              socket.to(idChat).emit('msgBroadcast', mensaje) //Incluye todos los roms (editar)
+              socket.broadcast.emit('notificacion', mensaje)
             })
             socket.on('disconnect', () => {
               //io.to(id).emit('mensajes', {servidor: "Servidor", mensaje: `${nombre} ha abandonado la sala` });

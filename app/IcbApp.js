@@ -4,17 +4,20 @@ import Menu from './Menu'
 import APIInvoker from  './utils/APIInvoker'
 import update from 'react-addons-update'
 import { browserHistory } from 'react-router'
+import socket from './utils/Socket';  //Empieza estando conectado
 
 class IcbApp extends React.Component {
 
     constructor() {
         super(...arguments)
         this.state = {
-            
+
         }
     }
 
-    componentDidMount(){   //En el libro se usa el componentWillMount()
+    componentDidMount(){
+        socket.connect()
+        
         // Aquí hay que comprobar el login (token y codigo, Con la ayuda de algún servicio del API)
         //Si es valida la sesión --> se tiene que configurar el estado con los datos que necesitaremos de la persona
         // Por el contrario, el 'profile: null' será suficiente para que Menú sepa que no se ha inicia sesión
@@ -47,7 +50,8 @@ class IcbApp extends React.Component {
 
     render() {
      //   let menu = this.state.menu
-        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.state.profile})
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.state.profile, 
+            socket: socket})
         let esCelu = false
         if (window.innerWidth < 577) {
             esCelu = true
@@ -55,7 +59,7 @@ class IcbApp extends React.Component {
         return (
             <div className="container-fluid px-2 div-principal">
                 {this.state.profile != null?
-                    <Toolbar perfil={this.state.profile} />
+                    <Toolbar perfil={this.state.profile} socket={socket} />
                 :
                     <Toolbar />
                 }

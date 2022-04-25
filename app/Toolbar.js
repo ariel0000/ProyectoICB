@@ -4,13 +4,13 @@ import { FaBell, FaBellSlash, FaBars} from 'react-icons/fa'
 import { browserHistory } from 'react-router'
 import { IconContext } from "react-icons";
 import update from 'react-addons-update'
-
+import socket from './utils/Socket';
 /* Podría definir un css e importarlo como lo hice en Index.js */
 
 class Toolbar extends React.Component {
 
-    constructor() {
-        super(...arguments)
+    constructor(props) {
+        super(props)
         this.state = {
             letNotification: true,
             notificaciones: []
@@ -18,6 +18,10 @@ class Toolbar extends React.Component {
     }
 
     componentDidMount(){
+        this.prepararSocket
+        socket.on('notificacion', (mensaje) => {
+                this.nuevaNotificacion("Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
+        })
         let newState
         if(Notification.permission === "granted"){
             //dejo el true en letNotification
@@ -26,11 +30,43 @@ class Toolbar extends React.Component {
             newState = update(this.state, {letNotification: {$set: false}})
         }
         this.setState(newState)
+        
     }
 
     redirigir(e){
         e.preventDefault()
         browserHistory.push('/login')
+    }
+
+    prepararSocket(){
+        //Inicializa el socket y me uno a las rooms correspondientes
+        this.inicializarNotificaciones()
+    }
+
+    inicializarNotificaciones(){
+        // Verifico si hay usuario logueado y recién dsps inicializo
+        socket.connect()
+        if(this.props.perfil != undefined){
+            let rooms = this.obtenerIdRooms()
+            socket.emit('conectado', [rooms])
+        }
+    }
+
+    obtenerIdRooms(){
+        //Obtengo las rooms de los gda, los eventos, los aleatorios, etc...
+        // let tipoDeRooms = []  //gda, evento, especial, ....
+        let rooms = []
+        let gdas = this.props.perfil.gdas
+        rooms.push(this.agregarRooms(gdas, "gda"))
+    }
+    
+    agregarRooms(arrayRooms, tipo){ //tipo = "gda" | "evento" | "private_chat"
+        let rooms = []
+        //Dsps tendría que recorrer el array de los tipos de rooms con el siguiente 'for' dentro
+        for(let i = 0; i <= arrayRooms.length-1; i++){
+            rooms.push(tipo+""+arrayRooms[i].id) //tomo el id del gda, evento, o lo que sea
+        }
+        return rooms
     }
 
     notify(e){
@@ -64,7 +100,7 @@ class Toolbar extends React.Component {
         
     }
 
-    nuevaNotificacion(){
+    nuevaNotificacion(mensaje){
         //Creo una nueva notificación según corresponda.
         const options = {
             style:{
@@ -81,7 +117,7 @@ class Toolbar extends React.Component {
                 duration: 5000
             }
         }
-        iqwerty.toast.toast('Nuevo mensaje en GDA de Cristiano Ronaldo', options);
+        iqwerty.toast.toast(mensaje, options);
     }
 
     render() {
@@ -122,14 +158,14 @@ class Toolbar extends React.Component {
                     <div className="p-1 bd-highlight order-3 order-sm-2 order-md-2">
                         <Choose>
                             <When condition={this.props.perfil != undefined}>
-                                <p>
+                                <span>
                                     Hola {this.props.perfil.nombre} !
-                                </p>
+                                </span>
                             </When>
                             <Otherwise>
-                                <p>
+                                <span>
                                     Sin Logearse
-                                </p>
+                                </span>
                             </Otherwise>
                         </Choose>
                         {/*<label htmlFor={"perfil"} className="btn btn-light ">
@@ -140,7 +176,6 @@ class Toolbar extends React.Component {
                     </div>
                 </div>
             </div>
-            <button className='btn btn-primary' onClick={this.nuevaNotificacion.bind(this)} >Mostrar Notificación</button>
         </div>
         </IconContext.Provider>
         )

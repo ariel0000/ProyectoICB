@@ -12,13 +12,14 @@ class MainApp extends React.Component{
         }
     }
 
-    ComponentDidMount(){
+    componentDidMount(){
         // Acá debería cargar el profile. El componente ya está montado (el dom existe)
     }
 
     render(){
         let randomId = uuidv4();            
-        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile, key: randomId});
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile, key: randomId,
+        socket: this.props.socket});
 
         return(
             <div className="col-sm-9 col-md-9 col-lg-9 mainApp gx-xs-0 gx-sm-3">

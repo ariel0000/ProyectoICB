@@ -156,7 +156,8 @@ class VerGDAs extends React.Component {
             document.removeEventListener('mousedown', this.handleClickOutside);
             //Funcionó
         }
-        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile})
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile, 
+            socket: this.props.socket})
 
         return (
             <div className="infoApp container-fluid px-2" >

@@ -1,6 +1,6 @@
+import { browserHistory } from 'react-router';
 import React from 'react'
 import update from 'react-addons-update'
-import socket from './utils/Socket';  //Empieza estando conectado
 import WindowFocusHandler from './WindowsFocusHandler';
 
 // function Chat({nombre, id, pathname}) {  //Estos atributos son pasados como props 
@@ -10,52 +10,49 @@ class Chat extends React.Component {
         this.state = {
             mensajes: [],
             mensaje: "",
-            conectado: true,
             pagina: 0
         }
     }
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
-        socket.connect()
-        socket.emit('conectado', this.props.id);  //id del chat
-        socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
-            if(mensaje.idper == this.props.idpersona){
+        this.props.socket.emit('conectado', [this.props.id]);  //id del chat
+        this.props.socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
+            if(mensaje.idper == this.props.idpersona){ //Cuando soy el cliente que envió el mensaje
                 this.agregarMensaje(mensaje)
-
-                // this.props.addMsg(mensaje) //Solo se agregar el msj si soy el usuario que lo creo
-            //La f tendría que ser pasada como 2-do parámetro para ser llamada como callback
+                //En la siguiente función y las subllamadas guardo el mensaje y dsps lo envío a los otros clientes
             }
         })
 
-        socket.on('msgBroadcast', (mensaje) => {
+        this.props.socket.on('msgBroadcast', (mensaje) => {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
             this.consultarUltimoMensaje(mensaje)
         })
 
-        socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
+        this.props.socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
             console.log('Failed to connect to server');
-            this.props.reload() //Causa la carga y la reconexción
+            window.location = ('/')
         });
 
-        socket.on('disconnect', () => {
-            let nuevoEstado = update(this.state, {conectado: {$set: false}});
-            this.setState(nuevoEstado);
+        this.props.socket.on('disconnect', () => {
+            // el auto connect esta deshabilitado
+           // this.props.socket.connect(); No puedo hacer esto porque no me reconecto a las rooms necesarias
+            window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
         })
     }
 
     componentWillUnmount(){
     //    console.log('Server desconectado')
-        socket.off()  //Cancela todos los eventos que pueda tener el socket
+        this.props.socket.off()  //Cancela todos los eventos que pueda tener el socket
     }
 
     msgToAnother(mensaje){
         //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
-        socket.emit('msgToAnother', mensaje)
+        this.props.socket.emit('msgToAnother', mensaje, this.props.id)
     }
 
     agregarMensaje(mensaje){
         //Usar sync y await para que la segunda función espere a la primera
-        this.props.addMsg(mensaje, this.msgToAnother)
+        this.props.addMsg(mensaje, this.msgToAnother.bind(this))
     }
 
     consultarUltimoMensaje(mensaje){
@@ -76,7 +73,7 @@ class Chat extends React.Component {
             return
         }
         let newState = update(this.state, {mensaje: {$set: ''}})
-        socket.emit('mensaje', this.props.idpersona, this.state.mensaje)
+        this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, this.props.id)
         this.setState(newState)
     }
 
@@ -109,7 +106,7 @@ class Chat extends React.Component {
         let distanciaAlTope = e.target.scrollTop
         if(distanciaAlTope <= 5){
             this.props.getMensajes(this.state.pagina+1);
-            e.target.scrollTop = 1650
+            e.target.scrollTop = 1000
             let newState = update(this.state, {pagina: {$set: this.state.pagina+1}})
             this.setState(newState)
         }

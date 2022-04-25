@@ -143,9 +143,11 @@ class GDA extends React.Component{
                     <div className="row justify-content-center align-items-center mt-1">
                         <div className="col-sm-9 col-xs-12 gx-2">
                             <Chat idpersona={this.props.profile.id} 
-                                id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
-                                getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
-                                addMsg={this.agregarMensaje.bind(this)} lastMsj={this.consultarUltimoMensaje.bind(this)} />
+                                id={"gda"+this.props.params.gda} reload={this.reload.bind(this)}
+                                getMensajes={this.consultarMensajes.bind(this)} 
+                                mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
+                                lastMsj={this.consultarUltimoMensaje.bind(this)} 
+                                socket= {this.props.socket} />
                         </div>
                     </div>
                 </div>
