@@ -13,15 +13,20 @@ class Toolbar extends React.Component {
         super(props)
         this.state = {
             letNotification: true,
-            notificaciones: []
+            notificaciones: new Map()
         }
     }
 
     componentDidMount(){
         this.prepararSocket
         socket.on('notificacion', (mensaje) => {
-                this.nuevaNotificacion("Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
+            this.nuevaNotificacion("Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
+            this.agregarAMapa(mensaje)
         })
+        socket.on('disconnect', () => {
+            window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
+        })
+        
         let newState
         if(Notification.permission === "granted"){
             //dejo el true en letNotification
@@ -30,7 +35,32 @@ class Toolbar extends React.Component {
             newState = update(this.state, {letNotification: {$set: false}})
         }
         this.setState(newState)
-        
+    }
+
+    agregarAMapa(mensaje){ //Agrego como notificación el mensaje al estado (this.state.notificaciones: es un mapa)
+        let tipoMsg = this.obtenerTipoNotif(mensaje)
+        let repetido = false //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
+        this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
+            if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
+                repetido = true
+            }
+        })
+        let id = tipoMsg.replace(/\D/g, "");  //obtengo los numeros a través de una expresión regular
+        if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación
+            this.setState(this.state.notificaciones.set(tipoMsg, '/MainApp/verGDAsEdit/'+id))
+        }
+    }
+
+    obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
+        if(mensaje.gda != undefined){
+            return "gda"+mensaje.gda.id
+        }
+        else if(mensaje.evento != undefined){
+            return "evento"+mensaje.evento.id
+        }
+        else{
+            return "nose"
+        }
     }
 
     redirigir(e){
@@ -127,7 +157,7 @@ class Toolbar extends React.Component {
         <div className="row toolbar">
             <div className="col-xs-12 col-sm-12 col-md-12">
                 <div className="d-flex justify-content-end text-primary bg-white align-items-center">
-                    <div className="me-auto p-1 bd-highlight order-1 order-sm-0 order-md-0" >
+                    <div className="me-auto p-1 bd-highlight order-1 order-sm-0 order-md-0 dropdown" >
                         <Choose>
                             <When condition={this.props.perfil != undefined}>  {/* Hay usuario logeado */}
                             <label htmlFor={"notificador"} className="btn btn-white text-primary">
@@ -139,12 +169,23 @@ class Toolbar extends React.Component {
                             </label>
                             <input href="#" className="d-none" accept=".gif, .jpg, .png, .bmp" type="button"
                             id={"notificador"} onClick={this.notify.bind(this)}></input>
-                            <label htmlFor={"barrasNotif"} className="btn btn-white text-primary m-1">
+                            <button type="button" className="btn btn-white text-primary m-1 position-relative"
+                                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" >
                                 <FaBars />
-                            </label>
-                            <input href="#" className="d-none" accept=".gif, .jpg, .png, .bmp" type="button"
-                                id={"barrasNotif"}></input>
-
+                                {this.state.notificaciones.size > 0?
+                                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {this.state.notificaciones.size}
+                                <span className="visually-hidden">unread messages</span>
+                                </span>
+                                :
+                                <span/>
+                                }
+                            </button>
+                            <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a className="dropdown-item" href="#">Action</a></li>
+                                <li><a className="dropdown-item" href="#">Another action</a></li>
+                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
                             </When>
                         <Otherwise>
                             {/* No hay usuario logueado */}

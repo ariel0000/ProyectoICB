@@ -74,7 +74,7 @@ class VerNoticias extends React.Component {
                 <h6 className="text-white bg-danger rounded" id="errorField"></h6>
                 </blockquote>
                 <div className="row justify-content-center mb-1">
-                    <div className="col-9 col-md-7">
+                    <div className="col-9 col-md-7 me-md-5">
                         <div id="carouselExampleControls" className="carousel slide carousel-fade" data-bs-ride="carousel">
                             <div className="carousel-inner" id="soyElCarousel">
                                 {noticias.map((noticia, i) =>
@@ -108,7 +108,7 @@ class VerNoticias extends React.Component {
                 </div>
                 {(rol > 2)?
                 <div className="row justify-content-center">
-                    <div className="col-9 col-md-7">
+                    <div className="col-9 col-md-7 me-md-5">
                         <button className="btn btn-danger text-white" onClick={this.borrarNoticia.bind(this)}>
                             Borrar
                         </button> 

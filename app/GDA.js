@@ -67,6 +67,7 @@ class GDA extends React.Component{
 
     consultarUltimoMensaje(mensaje){
         //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
+        console.log()
         let newMensajes = this.state.mensajes.concat(mensaje).reverse()
         let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
         this.setState(newState)

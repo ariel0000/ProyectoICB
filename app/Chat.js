@@ -32,17 +32,17 @@ class Chat extends React.Component {
             console.log('Failed to connect to server');
             window.location = ('/')
         });
-
+        /*
         this.props.socket.on('disconnect', () => {
             // el auto connect esta deshabilitado
            // this.props.socket.connect(); No puedo hacer esto porque no me reconecto a las rooms necesarias
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
-        })
+        })*/
     }
 
     componentWillUnmount(){
     //    console.log('Server desconectado')
-        this.props.socket.off()  //Cancela todos los eventos que pueda tener el socket
+        this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' y no reinicia todo
     }
 
     msgToAnother(mensaje){
@@ -117,7 +117,7 @@ class Chat extends React.Component {
         /*if(!this.state.conectado){  ///Si no está conectado --> recargo la página
             this.recargar()
         } */
-        this.recargar()
+       // this.recargar()
     }
 
     recargar(){
