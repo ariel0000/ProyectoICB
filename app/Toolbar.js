@@ -13,7 +13,7 @@ class Toolbar extends React.Component {
         super(props)
         this.state = {
             letNotification: true,
-            notificaciones: new Map()
+            notificaciones: []
         }
     }
 
@@ -21,7 +21,7 @@ class Toolbar extends React.Component {
         this.prepararSocket
         socket.on('notificacion', (mensaje) => {
             this.nuevaNotificacion("Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
-            this.agregarAMapa(mensaje)
+            this.agregarNotificacion(mensaje, "Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
         })
         socket.on('disconnect', () => {
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
@@ -37,17 +37,31 @@ class Toolbar extends React.Component {
         this.setState(newState)
     }
 
-    agregarAMapa(mensaje){ //Agrego como notificación el mensaje al estado (this.state.notificaciones: es un mapa)
+    agregarNotificacion(mensaje, texto){ //Agrego como notificación el mensaje al estado (this.state.notificaciones: es un mapa)
         let tipoMsg = this.obtenerTipoNotif(mensaje)
-        let repetido = false //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
-        this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
+        let newState
+        let repetido = false 
+       /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
             if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
                 repetido = true
             }
-        })
+        })*/
+        for(let i = 0; i < this.state.notificaciones.length; i++){ 
+            //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
+            if(this.state.notificaciones[i].tipo == tipoMsg){
+                repetido = true
+            }
+        }
         let id = tipoMsg.replace(/\D/g, "");  //obtengo los numeros a través de una expresión regular
-        if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación
-            this.setState(this.state.notificaciones.set(tipoMsg, '/MainApp/verGDAsEdit/'+id))
+        if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
+            let notificacion = {
+                tipo: tipoMsg,
+                url: '/MainApp/verGDAsEdit/'+id,
+                mensaje: texto,
+                visto: false
+            }
+            newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
+            this.setState(newState)
         }
     }
 
@@ -132,6 +146,10 @@ class Toolbar extends React.Component {
 
     nuevaNotificacion(mensaje){
         //Creo una nueva notificación según corresponda.
+        if(this.props.perfil == undefined){
+            //Para que no muestre notificación si no estoy registrado
+            return
+        }
         const options = {
             style:{
                 main: {
@@ -150,8 +168,33 @@ class Toolbar extends React.Component {
         iqwerty.toast.toast(mensaje, options);
     }
 
+    irAUrl(e){
+        //Voy  a la url del target
+        e.preventDefault()
+        let url = e.target.title
+        console.log('Redirigiendo a la url: '+url)
+    }
+
+    setearVisto(e){
+        // Tengo que poner todas las notificaciones en visto
+        e.preventDefault()
+        let notif = this.state.notificaciones
+     
+        for(let i = 0; i < notif.length; i++){
+            notif[i].visto = true
+        }
+        let newState = update(this.state, {notificaciones: {$set: notif}})
+        this.setState(newState)
+    }
+
     render() {
-        
+        let notificaciones = this.state.notificaciones
+        let notifNoVistas = 0
+        for(let i = 0; i < this.state.notificaciones.length; i++){
+            if(!this.state.notificaciones[i].visto){  //Si es fale cuenta 1 notif no vista
+                notifNoVistas++;
+            }
+        }
     return (
         <IconContext.Provider value={{size: "15px"}}>
         <div className="row toolbar">
@@ -170,11 +213,12 @@ class Toolbar extends React.Component {
                             <input href="#" className="d-none" accept=".gif, .jpg, .png, .bmp" type="button"
                             id={"notificador"} onClick={this.notify.bind(this)}></input>
                             <button type="button" className="btn btn-white text-primary m-1 position-relative"
-                                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" >
+                                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
+                                 onClick={this.setearVisto.bind(this)}>
                                 <FaBars />
-                                {this.state.notificaciones.size > 0?
+                                {notifNoVistas > 0?
                                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    {this.state.notificaciones.size}
+                                    {notifNoVistas}
                                 <span className="visually-hidden">unread messages</span>
                                 </span>
                                 :
@@ -182,9 +226,12 @@ class Toolbar extends React.Component {
                                 }
                             </button>
                             <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a className="dropdown-item" href="#">Action</a></li>
-                                <li><a className="dropdown-item" href="#">Another action</a></li>
-                                <li><a className="dropdown-item" href="#">Something else here</a></li>
+                                {notificaciones.map((e, i) => 
+                                <li key={i}><span className="dropdown-item" title={e.url} onClick={this.irAUrl.bind(this)}>
+                                    {e.mensaje}
+                                </span>
+                                </li>
+                                )}
                             </ul>
                             </When>
                         <Otherwise>
