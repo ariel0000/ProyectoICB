@@ -204,3 +204,8 @@ html.modal-mode{  /* Para el componente Modal: Hace desaparecer el scroll en los
     transition: opacity 4000ms ease-in
 }
 /* ------------------- */
+
+/* Spinner de mi creación para toda la aplicación */
+img.loading {
+    background: transparent url(/img/Spinner-2.gif) no-repeat scroll center center;
+}

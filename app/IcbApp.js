@@ -59,7 +59,8 @@ class IcbApp extends React.Component {
         return (
             <div className="container-fluid px-2 div-principal">
                 {this.state.profile != null?
-                    <Toolbar perfil={this.state.profile} socket={socket} />
+                    <Toolbar perfil={this.state.profile} socket={socket} pathname={this.props.location.pathname}
+                    params={this.props.location.pathname} />
                 :
                     <Toolbar />
                 }

@@ -41,7 +41,7 @@ class Chat extends React.Component {
     }
 
     componentWillUnmount(){
-    //    console.log('Server desconectado')
+    //    console.log('Server desconectado') 
         this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' y no reinicia todo
     }
 

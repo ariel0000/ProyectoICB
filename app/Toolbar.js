@@ -24,6 +24,7 @@ class Toolbar extends React.Component {
             this.agregarNotificacion(mensaje, "Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
         })
         socket.on('disconnect', () => {
+            //Debería consultar el browser history y si tiene un valor de redirección a otra parte no se ejecuta lo de abajo
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
         })
         
@@ -58,7 +59,8 @@ class Toolbar extends React.Component {
                 tipo: tipoMsg,
                 url: '/MainApp/verGDAsEdit/'+id,
                 mensaje: texto,
-                visto: false
+                visto: false,
+                fecha: new Date() //No necesito un formato específico, es solo comparativo
             }
             newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
             this.setState(newState)
@@ -172,7 +174,10 @@ class Toolbar extends React.Component {
         //Voy  a la url del target
         e.preventDefault()
         let url = e.target.title
-        console.log('Redirigiendo a la url: '+url)
+        if(url != this.props.pathname){ //Solo redirigo si es distinto
+            browserHistory.push(url)
+        }
+        
     }
 
     setearVisto(e){

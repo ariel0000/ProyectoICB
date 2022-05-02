@@ -148,7 +148,7 @@ class GDA extends React.Component{
                                 getMensajes={this.consultarMensajes.bind(this)} 
                                 mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
                                 lastMsj={this.consultarUltimoMensaje.bind(this)} 
-                                socket= {this.props.socket} />
+                                socket= {this.props.socket} pathname={this.props.location.pathname} />
                         </div>
                     </div>
                 </div>
