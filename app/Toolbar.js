@@ -5,6 +5,8 @@ import { browserHistory } from 'react-router'
 import { IconContext } from "react-icons";
 import update from 'react-addons-update'
 import socket from './utils/Socket';
+import APIInvoker from './utils/APIInvoker'
+import {saveNotification} from './utils/metodosAPI'
 /* Podría definir un css e importarlo como lo hice en Index.js */
 
 class Toolbar extends React.Component {
@@ -13,20 +15,31 @@ class Toolbar extends React.Component {
         super(props)
         this.state = {
             letNotification: true,
-            notificaciones: []
+            notificaciones: [],
+            mapaDeUrls: new Map([
+                ['gda', '/MainApp/verGDAsEdit/'],
+                ['evento', '/MainApp/verEvento/'],
+                ['noticia', '/MainApp/verNoticia/']
+            ])
+            /* 
+            let userRoles = new Map([
+    [john, 'admin'],
+    [lily, 'editor'],
+    [peter, 'subscriber']
+]); */
         }
     }
 
     componentDidMount(){
-        this.prepararSocket
-        socket.on('notificacion', (mensaje) => {
-            this.nuevaNotificacion("Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
-            this.agregarNotificacion(mensaje, "Nuevo mensaje en el gda de: "+mensaje.gda.lider.nombre)
+        this.prepararSocket()
+        socket.on('msg_notificacion', (mensaje, info) => {
+            this.agregarNotificacion(mensaje, info)
+            //mensaje en la función de arriba representa al body
         })
         socket.on('disconnect', () => {
-            //Debería consultar el browser history y si tiene un valor de redirección a otra parte no se ejecuta lo de abajo
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
         })
+        this.cargarNotificaciones()
         
         let newState
         if(Notification.permission === "granted"){
@@ -38,10 +51,17 @@ class Toolbar extends React.Component {
         this.setState(newState)
     }
 
-    agregarNotificacion(mensaje, texto){ //Agrego como notificación el mensaje al estado (this.state.notificaciones: es un mapa)
-        let tipoMsg = this.obtenerTipoNotif(mensaje)
-        let newState
+    cargarNotificaciones(){
+        //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)
+        
+    }
+
+    agregarNotificacion(mensaje, info){ //Agrego como notificación el mensaje al estado
+        let tipoMsg = this.obtenerTipoNotif(mensaje) //el tipo define el url tmbn (gda, evento, noticia)
+        let newState 
         let repetido = false 
+        
+        let textoUrl = this.state.mapaDeUrls.get(tipoMsg.replace(/[^a-z]/gi, '')); //Mapa donde estan definidas las Url
        /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
             if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
                 repetido = true
@@ -53,18 +73,18 @@ class Toolbar extends React.Component {
                 repetido = true
             }
         }
-        let id = tipoMsg.replace(/\D/g, "");  //obtengo los numeros a través de una expresión regular
+        let id = tipoMsg.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
         if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
             let notificacion = {
-                tipo: tipoMsg,
-                url: '/MainApp/verGDAsEdit/'+id,
-                mensaje: texto,
-                visto: false,
+                tipo: tipoMsg,  // gda2, evento3, ...
+                url: textoUrl+id,
+                mensaje: info,
                 fecha: new Date() //No necesito un formato específico, es solo comparativo
             }
             newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
             this.setState(newState)
         }
+        this.nuevaNotificacion(tipoMsg, textoUrl, info)
     }
 
     obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
@@ -74,8 +94,8 @@ class Toolbar extends React.Component {
         else if(mensaje.evento != undefined){
             return "evento"+mensaje.evento.id
         }
-        else{
-            return "nose"
+        else if(mensaje.noticia != undefined){
+            return "nose"+mensaje.nose.id
         }
     }
 
@@ -115,7 +135,7 @@ class Toolbar extends React.Component {
         return rooms
     }
 
-    notify(e){
+    notify(e){  //Todavía no anduvo para Chrome de cierta versión, ver mi celular
         e.preventDefault()
         let newState
         function checkNotificationPromise() { //Para las vers. que no son compatibles con el Promise
@@ -146,28 +166,46 @@ class Toolbar extends React.Component {
         
     }
 
-    nuevaNotificacion(mensaje){
+    nuevaNotificacion(tipoMsg, textoUrl, info){
         //Creo una nueva notificación según corresponda.
         if(this.props.perfil == undefined){
             //Para que no muestre notificación si no estoy registrado
             return
         }
-        const options = {
-            style:{
-                main: {
-                    background: "#31d2f2",
-                    color: "white",
-                    position: 'fixed', 
-                    left: '0px',
-                    right: '0px',
-                    bottom: '0px'
+        saveNotification(tipoMsg, textoUrl, info, mostrarNotificacion)
+        function mostrarNotificacion(mensaje){
+            const options = {
+                style:{
+                    main: {
+                        background: "#31d2f2",
+                        color: "white",
+                        position: 'fixed', 
+                        left: '0px',
+                        right: '0px',
+                        bottom: '0px'
+                    }
+                },
+                settings: {
+                    duration: 5000
                 }
-            },
-            settings: {
-                duration: 5000
             }
+            iqwerty.toast.toast(mensaje, options);
         }
-        iqwerty.toast.toast(mensaje, options);
+    }
+
+    guardarNotificacion(body, mensaje, callBackMostrarNotificacion){
+        //Guarda la notificacion en la base de datos. O actualiza la del mismo tipo.
+        let tipoMsg = this.obtenerTipoNotif(body) //body es el objeto mensaje tal cuál llega del socket
+        let params = {
+            tipo: tipoMsg,
+            url: ''
+        }
+        APIInvoker.invokePOST('/icb-api/v1/notificacion', params, response => {
+
+        },
+        error => {
+
+        })
     }
 
     irAUrl(e){
@@ -177,7 +215,6 @@ class Toolbar extends React.Component {
         if(url != this.props.pathname){ //Solo redirigo si es distinto
             browserHistory.push(url)
         }
-        
     }
 
     setearVisto(e){

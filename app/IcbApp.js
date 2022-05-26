@@ -50,12 +50,12 @@ class IcbApp extends React.Component {
 
     render() {
      //   let menu = this.state.menu
-        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.state.profile, 
-            socket: socket})
         let esCelu = false
         if (window.innerWidth < 577) {
             esCelu = true
         }
+        let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.state.profile, 
+            socket: socket, esCelu: esCelu})
         return (
             <div className="container-fluid px-2 div-principal">
                 {this.state.profile != null?

@@ -1,4 +1,3 @@
-import { browserHistory } from 'react-router';
 import React from 'react'
 import update from 'react-addons-update'
 import WindowFocusHandler from './WindowsFocusHandler';
@@ -45,12 +44,13 @@ class Chat extends React.Component {
         this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' y no reinicia todo
     }
 
-    msgToAnother(mensaje){
+    msgToAnother(mensaje, detalle){
         //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
-        this.props.socket.emit('msgToAnother', mensaje, this.props.id)
+        this.props.socket.emit('msgToAnother', mensaje, detalle, this.props.id)
     }
 
     agregarMensaje(mensaje){
+        //Metodo que solo se ejecuta cuando soy yo quíen mando el mensaje
         //Usar sync y await para que la segunda función espere a la primera
         this.props.addMsg(mensaje, this.msgToAnother.bind(this))
     }
@@ -133,7 +133,8 @@ class Chat extends React.Component {
         return (
             <div className="infoApp container-fluid" id='ChatComponent'>
                 <div className="row mt-1" >
-                    <div className='col-12 bg-info p-2 caja-chat' onScroll={this.onScroll.bind(this)}>
+                    <div  className={this.props.esCelu? "col-12 bg-info p-2 caja-chat-celu": "col-12 bg-info p-2 caja-chat"} 
+                        onScroll={this.onScroll.bind(this)} >
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
                         'd-flex justify-content-end': 'd-flex justify-content-start' }>

@@ -45,7 +45,7 @@ class GDA extends React.Component{
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState, newMsjs
         APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
-            response=> {
+            response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
                     newMsjs = this.state.mensajes.reverse() //Lo doy vuelta porque dsps se vuelve 
                     // a dar vuelta solo
@@ -113,8 +113,8 @@ class GDA extends React.Component{
             let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
             let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
             this.setState(newState) //Cambia el orden de los mensajes
-            callbackF(json.body) //el callback incluye el mensaje tal cual es guardado en la BdD
-            
+            callbackF(json.body, 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre) 
+            //el callback incluye el mensaje tal cual es guardado en la BdD
         })
         .catch(err => {
             console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)

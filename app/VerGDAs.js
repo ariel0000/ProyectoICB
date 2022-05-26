@@ -157,7 +157,7 @@ class VerGDAs extends React.Component {
             //Funcionó
         }
         let childs = this.props.children && React.cloneElement(this.props.children, {profile: this.props.profile, 
-            socket: this.props.socket})
+            socket: this.props.socket, esCelu: this.props.esCelu})
 
         return (
             <div className="infoApp container-fluid px-2" >

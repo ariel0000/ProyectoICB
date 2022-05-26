@@ -33,9 +33,12 @@ class VerNoticias extends React.Component {
     componentDidUpdate(prevProps, prevState){
         //Se ejecuta después del render(). Recibe el estado anterior, las propiedades anteriores y un snapshot
         let div_carousel = document.getElementById('soyElCarousel')
-        if(this.state.noticias != prevState.noticas){
-            //Tengo que ponerle "active" al primer elemento de la lista de imágenes
-            div_carousel.firstChild.className = 'carousel-item active'
+        if(!this.state.noticias.length < 1){
+            if(this.state.noticias != prevState.noticas){
+                //Tengo que ponerle "active" al primer elemento de la lista de imágenes
+                div_carousel.firstChild.className = 'carousel-item active'
+            }
+        
         }
     }
 
