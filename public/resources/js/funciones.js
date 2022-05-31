@@ -17,20 +17,21 @@ module.exports = {
 
         rooms = idChats;
         socket.join(rooms);
+        console.log(socket.rooms);
       });
       socket.on('mensaje', (idper, mensaje, idChat) => {
         io.to(idChat).emit('mensajes', { idper, mensaje });
       });
       socket.on('msgToAnother', (mensaje, info, idChat) => {
-        socket.to(idChat).emit('msgBroadcast', mensaje); //Incluye todos los roms (editar)
-        socket.broadcast.emit('msg_notificacion', mensaje, info);
+        socket.to(idChat).emit('msgBroadcast', mensaje);
+        socket.broadcast.to(idChat).emit('msg_notificacion', mensaje, info);
         //   metodosAPI.guardarNotificacion(mensaje, info);
       });
-      socket.on('addPersona', (mensaje) => {
-        socket.broadcast.emit('add_persona', mensaje);
+      socket.on('addPersona', (mensaje, info) => {
+        socket.broadcast.emit('add_persona', mensaje, info);
       });
-      socket.on('addNoticia', (mensaje) => {
-        socket.broadcast.emit('add_noticia', mensaje);
+      socket.on('addNoticia', (mensaje, info) => {
+        socket.broadcast.emit('add_noticia', mensaje, info);
       });
       socket.on('disconnect', () => {
         //io.to(id).emit('mensajes', {servidor: "Servidor", mensaje: `${nombre} ha abandonado la sala` });

@@ -33,13 +33,15 @@ class Toolbar extends React.Component {
     componentDidMount(){
         this.prepararSocket()
         socket.on('msg_notificacion', (mensaje, info) => {
-            this.agregarNotificacion(mensaje, info)
+            this.agregarNotificacion('msg', mensaje, info)
             //mensaje en la función de arriba representa al body
         })
         socket.on('disconnect', () => {
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
         })
-        this.cargarNotificaciones()
+        socket.on('add_persona', (mensaje, info) => {
+            this.agregarNotificacion('add', mensaje, info);
+        })
         
         let newState
         if(Notification.permission === "granted"){
@@ -48,15 +50,15 @@ class Toolbar extends React.Component {
         else{
             newState = update(this.state, {letNotification: {$set: false}})
         }
+        this.cargarNotificaciones()
         this.setState(newState)
     }
 
     cargarNotificaciones(){
-        //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)
-        
+        //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)   
     }
 
-    agregarNotificacion(mensaje, info){ //Agrego como notificación el mensaje al estado
+    agregarNotificacion(preTipo, mensaje, info){ //Agrego como notificación el mensaje al estado
         let tipoMsg = this.obtenerTipoNotif(mensaje) //el tipo define el url tmbn (gda, evento, noticia)
         let newState 
         let repetido = false 
@@ -84,7 +86,7 @@ class Toolbar extends React.Component {
             newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
             this.setState(newState)
         }
-        this.nuevaNotificacion(tipoMsg, textoUrl, info)
+        this.nuevaNotificacion(preTipo+tipoMsg, textoUrl+id, info)
     }
 
     obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
@@ -95,7 +97,7 @@ class Toolbar extends React.Component {
             return "evento"+mensaje.evento.id
         }
         else if(mensaje.noticia != undefined){
-            return "nose"+mensaje.nose.id
+            return "nose"+mensaje.noticia.id
         }
     }
 
