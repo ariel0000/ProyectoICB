@@ -14,7 +14,7 @@ class Chat extends React.Component {
     }
 
     componentDidMount() { //Se ejecuta ni bien termina el renderizado
-        this.props.socket.emit('conectado', [this.props.id]);  //id del chat
+    //    this.props.socket.emit('conectado', [this.props.id]);  //id del chat
         this.props.socket.on('mensajes', (mensaje) => {  //Se ejecuta cada vez que llega la orden de 'mensajes'
             if(mensaje.idper == this.props.idpersona){ //Cuando soy el cliente que envió el mensaje
                 this.agregarMensaje(mensaje)
@@ -41,7 +41,8 @@ class Chat extends React.Component {
 
     componentWillUnmount(){
     //    console.log('Server desconectado') 
-        this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' y no reinicia todo
+       // this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' que redirige a '/'
+       this.props.socket.off('mensajes')
     }
 
     msgToAnother(mensaje, detalle){
@@ -73,7 +74,7 @@ class Chat extends React.Component {
             return
         }
         let newState = update(this.state, {mensaje: {$set: ''}})
-        this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, this.props.id)
+        this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, [this.props.id]) //id del chat
         this.setState(newState)
     }
 

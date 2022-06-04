@@ -30,8 +30,14 @@ class Toolbar extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.perfil != this.props.perfil){
+            this.prepararSocket()
+        }
+     }
+
     componentDidMount(){
-        this.prepararSocket()
+     //   this.prepararSocket() - Lo saco de acá y lo paso a componentDidUpdate
         socket.on('msg_notificacion', (mensaje, info) => {
             this.agregarNotificacion('msg', mensaje, info)
             //mensaje en la función de arriba representa al body
@@ -59,34 +65,38 @@ class Toolbar extends React.Component {
     }
 
     agregarNotificacion(preTipo, mensaje, info){ //Agrego como notificación el mensaje al estado
-        let tipoMsg = this.obtenerTipoNotif(mensaje) //el tipo define el url tmbn (gda, evento, noticia)
-        let newState 
-        let repetido = false 
-        
-        let textoUrl = this.state.mapaDeUrls.get(tipoMsg.replace(/[^a-z]/gi, '')); //Mapa donde estan definidas las Url
-       /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
-            if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
-                repetido = true
+        if(mensaje.persona.id != this.props.perfil.id){ //La persona que envió el mensaje se encarga de guardarlo
+            let tipoMsg = this.obtenerTipoNotif(mensaje) //el tipo define el url tmbn (gda, evento, noticia)
+            let newState 
+            let repetido = false 
+            
+            let textoUrl = this.state.mapaDeUrls.get(tipoMsg.replace(/[^a-z]/gi, '')); //Mapa donde estan definidas las Url
+        /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
+                if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
+                    repetido = true
+                }
+            })*/
+            for(let i = 0; i < this.state.notificaciones.length; i++){ 
+                //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
+                if(this.state.notificaciones[i].tipo == tipoMsg){
+                    repetido = true
+                }
             }
-        })*/
-        for(let i = 0; i < this.state.notificaciones.length; i++){ 
-            //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
-            if(this.state.notificaciones[i].tipo == tipoMsg){
-                repetido = true
+            let id = tipoMsg.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
+            if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
+                let notificacion = {
+                    tipo: tipoMsg,  // gda2, evento3, ...
+                    url: textoUrl+id,
+                    mensaje: info,
+                    fecha: new Date() //No necesito un formato específico, es solo comparativo
+                }
+                newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
+                this.setState(newState)
             }
         }
-        let id = tipoMsg.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
-        if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
-            let notificacion = {
-                tipo: tipoMsg,  // gda2, evento3, ...
-                url: textoUrl+id,
-                mensaje: info,
-                fecha: new Date() //No necesito un formato específico, es solo comparativo
-            }
-            newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
-            this.setState(newState)
-        }
-        this.nuevaNotificacion(preTipo+tipoMsg, textoUrl+id, info)
+        else{ //La persona que envió el mensaje se encarga de guardarlo
+            this.nuevaNotificacion(preTipo+tipoMsg, textoUrl+id, info) 
+        }   
     }
 
     obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
@@ -116,16 +126,20 @@ class Toolbar extends React.Component {
         socket.connect()
         if(this.props.perfil != undefined){
             let rooms = this.obtenerIdRooms()
-            socket.emit('conectado', [rooms])
+            for(let i = 0; i <= rooms.length-1; i++){
+                socket.emit('conectado', rooms[i])
+            }
+            
         }
     }
 
     obtenerIdRooms(){
-        //Obtengo las rooms de los gda, los eventos, los aleatorios, etc...
-        // let tipoDeRooms = []  //gda, evento, especial, ....
+        //Obtengo las rooms de los gda, los eventos, los otros, etc...
+        // let tipoDeRooms = []  //gda, evento, otros, ....
         let rooms = []
         let gdas = this.props.perfil.gdas
         rooms.push(this.agregarRooms(gdas, "gda"))
+        return rooms;
     }
     
     agregarRooms(arrayRooms, tipo){ //tipo = "gda" | "evento" | "private_chat"

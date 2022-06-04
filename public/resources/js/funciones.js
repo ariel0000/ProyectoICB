@@ -11,12 +11,12 @@ module.exports = {
     };
     io = socketio(servidor, options);
     io.on('connection', socket => {
-      let rooms = [];
+      let room;
       socket.sendBuffer = [];
-      socket.on('conectado', (idChats) => {
+      socket.on('conectado', (idChat) => {
 
-        rooms = idChats;
-        socket.join(rooms);
+        room = idChat;
+        socket.join(room);
         console.log(socket.rooms);
       });
       socket.on('mensaje', (idper, mensaje, idChat) => {
@@ -24,6 +24,7 @@ module.exports = {
       });
       socket.on('msgToAnother', (mensaje, info, idChat) => {
         socket.to(idChat).emit('msgBroadcast', mensaje);
+        console.log("Id Chat actual: "+idChat)
         socket.broadcast.to(idChat).emit('msg_notificacion', mensaje, info);
         //   metodosAPI.guardarNotificacion(mensaje, info);
       });
