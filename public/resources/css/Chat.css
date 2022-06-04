@@ -20,6 +20,11 @@
     max-height: 350px;
 }
 
+.caja-chat-celu{
+    overflow-y: scroll;
+    max-height: 200px;
+}
+
 .cien-por-cien{
     height: 100%
 }

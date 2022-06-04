@@ -33,9 +33,12 @@ class VerNoticias extends React.Component {
     componentDidUpdate(prevProps, prevState){
         //Se ejecuta después del render(). Recibe el estado anterior, las propiedades anteriores y un snapshot
         let div_carousel = document.getElementById('soyElCarousel')
-        if(this.state.noticias != prevState.noticas){
-            //Tengo que ponerle "active" al primer elemento de la lista de imágenes
-            div_carousel.firstChild.className = 'carousel-item active'
+        if(!this.state.noticias.length < 1){
+            if(this.state.noticias != prevState.noticas){
+                //Tengo que ponerle "active" al primer elemento de la lista de imágenes
+                div_carousel.firstChild.className = 'carousel-item active'
+            }
+        
         }
     }
 
@@ -74,14 +77,14 @@ class VerNoticias extends React.Component {
                 <h6 className="text-white bg-danger rounded" id="errorField"></h6>
                 </blockquote>
                 <div className="row justify-content-center mb-1">
-                    <div className="col-9 col-md-7">
+                    <div className="col-9 col-md-7 me-md-5">
                         <div id="carouselExampleControls" className="carousel slide carousel-fade" data-bs-ride="carousel">
                             <div className="carousel-inner" id="soyElCarousel">
                                 {noticias.map((noticia, i) =>
                                 <div key={i} name={noticia.id} title={noticia.titulo} className="carousel-item" data-bs-interval="15000">
                                     <h4>{noticia.titulo}</h4>
                                     <h6 className="mt-1">{noticia.subtitulo}</h6>
-                                    <img src={noticia.url_imagen} alt="..." className="d-block w-100" />
+                                    <img src={noticia.url_imagen} className="d-block w-100 mt-1 mb-2 loading" />
                                     <h6 className="mt-1">{noticia.pie_de_pagina}</h6>
                                 </div>
                                 )}
@@ -99,7 +102,7 @@ class VerNoticias extends React.Component {
                 </div>
                 {(rol > 2)?
                 <div className="row justify-content-center">
-                    <div className="col-9 col-md-7">
+                    <div className="col-9 col-md-7 me-md-5">
                         <button className="btn btn-danger text-white" onClick={this.borrarNoticia.bind(this)}>
                             Borrar
                         </button> 

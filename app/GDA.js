@@ -45,7 +45,7 @@ class GDA extends React.Component{
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState, newMsjs
         APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
-            response=> {
+            response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
                     newMsjs = this.state.mensajes.reverse() //Lo doy vuelta porque dsps se vuelve 
                     // a dar vuelta solo
@@ -67,6 +67,7 @@ class GDA extends React.Component{
 
     consultarUltimoMensaje(mensaje){
         //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
+        console.log()
         let newMensajes = this.state.mensajes.concat(mensaje).reverse()
         let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
         this.setState(newState)
@@ -112,8 +113,8 @@ class GDA extends React.Component{
             let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
             let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
             this.setState(newState) //Cambia el orden de los mensajes
-            callbackF(json.body) //el callback incluye el mensaje tal cual es guardado en la BdD
-            
+            callbackF(json.body, 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre) 
+            //el callback incluye el mensaje tal cual es guardado en la BdD
         })
         .catch(err => {
             console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)
@@ -143,9 +144,11 @@ class GDA extends React.Component{
                     <div className="row justify-content-center align-items-center mt-1">
                         <div className="col-sm-9 col-xs-12 gx-2">
                             <Chat idpersona={this.props.profile.id} 
-                                id={this.props.params.gda+'gda'} reload={this.reload.bind(this)} 
-                                getMensajes={this.consultarMensajes.bind(this)} mensajes={this.state.mensajes}
-                                addMsg={this.agregarMensaje.bind(this)} lastMsj={this.consultarUltimoMensaje.bind(this)} />
+                                id={"gda"+this.props.params.gda} reload={this.reload.bind(this)}
+                                getMensajes={this.consultarMensajes.bind(this)} 
+                                mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
+                                lastMsj={this.consultarUltimoMensaje.bind(this)} 
+                                socket= {this.props.socket} pathname={this.props.location.pathname} />
                         </div>
                     </div>
                 </div>

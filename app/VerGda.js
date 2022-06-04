@@ -44,7 +44,12 @@ class VerGda extends React.Component {
         //Esta es la función que se pasa como prop al componente Modal "AgregarPersona"
         APIInvoker.invokeGET('/icb-api/v1/findById/' + idPer, response => {
             this.actualizarPersonaEnGda(this.state.gda.id, response.body)
-
+            let mensaje = {
+                gda: {
+                    "id": this.state.gda.id
+                }
+            }
+            this.props.socket.emit('addPersona', mensaje, "Nueva persona en GDA de: "+this.state.gda.lider.nombre)
         },
             error => {
                 let newState = update(this.state, { error: { $set: "Error: " + error.message } })
