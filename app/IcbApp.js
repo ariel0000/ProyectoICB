@@ -16,8 +16,13 @@ class IcbApp extends React.Component {
     }
 
     componentDidMount(){
-        socket.connect()
-        
+        socket.connect() //Inicializo el socket - 
+        socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
+            console.log('Failed to connect to server');
+            window.location = ('/')
+        });
+        // todo el resto de componentes se encargarán de registrar sus propios eventos.
+      
         // Aquí hay que comprobar el login (token y codigo, Con la ayuda de algún servicio del API)
         //Si es valida la sesión --> se tiene que configurar el estado con los datos que necesitaremos de la persona
         // Por el contrario, el 'profile: null' será suficiente para que Menú sepa que no se ha inicia sesión
@@ -66,7 +71,7 @@ class IcbApp extends React.Component {
                 }
                 <div className="row gx-0">  {/* En la misma 'row' tengo al Menú y al MainApp */}
                 {this.state.profile != null?
-                    <Menu esCelu={esCelu} perfil={this.state.profile} />
+                    <Menu esCelu={esCelu} perfil={this.state.profile} socket={socket} />
                     :
                     <Menu esCelu={esCelu} />
                 }

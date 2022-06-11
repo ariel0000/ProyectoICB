@@ -68,7 +68,7 @@ class GDA extends React.Component{
     consultarUltimoMensaje(mensaje){
         //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
         console.log()
-        let newMensajes = this.state.mensajes.concat(mensaje).reverse()
+        let newMensajes = this.state.mensajes.concat(mensaje.mensaje).reverse()
         let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
         this.setState(newState)
         /* APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+0+'&pageSize=1',
@@ -113,10 +113,22 @@ class GDA extends React.Component{
             let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
             let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
             this.setState(newState) //Cambia el orden de los mensajes
-            callbackF(json.body, 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre) 
+            let idChat = 'gda'+this.state.GDA.id
+            let mensaje = {
+                notificacion: 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre, //
+                mensaje: json.body,
+                persona: json.body.persona, //La persona que envió el mensaje
+                tipo: 'gda'+json.body.gda.id
+            }
+            callbackF(mensaje, idChat);
             //el callback incluye el mensaje tal cual es guardado en la BdD
         })
         .catch(err => {
+            if(err.status == 401){
+                window.localStorage.removeItem("token")
+                window.localStorage.removeItem("codigo")
+                window.location = ('/')
+            }
             console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)
         })
     }

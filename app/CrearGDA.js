@@ -127,6 +127,15 @@ class CrearGDA extends React.Component{
                     document.getElementById("errorField").innerText = "Error: "+error.message
                 })
                 this.setState(newState)
+                //mando al socket para que se actualize el menú. Necesito el id del chat
+                let idChat = "adm1"  //Los administradores son los que pueden recibir este mensaje
+                let mensaje = {
+                    notificacion: "Nuevo GDA creado. Líder: "+response.body.lider.nombre,
+                    persona: response.body.lider,
+                    tipo: 'gda'+response.body.id,
+                    mensaje: null //
+                }
+                this.props.socket.emit('addOptionMiGda', mensaje, idChat)
             },
             error=> {
                 document.getElementById("errorField").innerText = "Error: "+error.message
@@ -148,8 +157,7 @@ class CrearGDA extends React.Component{
         error => {
             if(error.status == 401){
                 alert("Debe iniciar sesión para realizar estas operaciones")
-                browserHistory.push("/MainApp")
-                console.log('Error, no hay usuario autenticado')
+                window.location = ('/')
             }
             else{
                 document.getElementById("errorField").innerText = "Error: "+error.message

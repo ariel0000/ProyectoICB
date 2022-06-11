@@ -19,7 +19,8 @@ class Toolbar extends React.Component {
             mapaDeUrls: new Map([
                 ['gda', '/MainApp/verGDAsEdit/'],
                 ['evento', '/MainApp/verEvento/'],
-                ['noticia', '/MainApp/verNoticia/']
+                ['noticia', '/MainApp/verNoticia/'],
+                ['newgda', '/MainApp/verGDAs']
             ])
             /* 
             let userRoles = new Map([
@@ -32,21 +33,25 @@ class Toolbar extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if(prevProps.perfil != this.props.perfil){
+            //Hago esta comparación acá porque en DidMount el prop es nulo
             this.prepararSocket()
         }
      }
 
     componentDidMount(){
      //   this.prepararSocket() - Lo saco de acá y lo paso a componentDidUpdate
-        socket.on('msg_notificacion', (mensaje, info) => {
-            this.agregarNotificacion('msg', mensaje, info)
+        socket.on('msg_notificacion', (mensaje) => {
+            this.agregarNotificacion('msg', mensaje)
             //mensaje en la función de arriba representa al body
         })
         socket.on('disconnect', () => {
             window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
         })
-        socket.on('add_persona', (mensaje, info) => {
-            this.agregarNotificacion('add', mensaje, info);
+        socket.on('add_persona', (mensaje) => {
+            this.agregarNotificacion('add', mensaje);
+        })
+        socket.on('add_option_mi_gda', (mensaje) => {
+            this.agregarNotificacion('new', mensaje);
         })
         
         let newState
@@ -64,13 +69,13 @@ class Toolbar extends React.Component {
         //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)   
     }
 
-    agregarNotificacion(preTipo, mensaje, info){ //Agrego como notificación el mensaje al estado
+    agregarNotificacion(preTipo, mensaje){ //Agrego como notificación el mensaje al estado
+        let textoUrl = this.state.mapaDeUrls.get(mensaje.tipo.replace(/[^a-z]/gi, '')); //Quito el/los n° del mensaje.tipo
+        let id = mensaje.tipo.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
         if(mensaje.persona.id != this.props.perfil.id){ //La persona que envió el mensaje se encarga de guardarlo
-            let tipoMsg = this.obtenerTipoNotif(mensaje) //el tipo define el url tmbn (gda, evento, noticia)
             let newState 
             let repetido = false 
             
-            let textoUrl = this.state.mapaDeUrls.get(tipoMsg.replace(/[^a-z]/gi, '')); //Mapa donde estan definidas las Url
         /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
                 if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
                     repetido = true
@@ -78,16 +83,15 @@ class Toolbar extends React.Component {
             })*/
             for(let i = 0; i < this.state.notificaciones.length; i++){ 
                 //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
-                if(this.state.notificaciones[i].tipo == tipoMsg){
+                if(this.state.notificaciones[i].tipo == mensaje.tipo){ //mensaje.tipo = gda2 (Ej)
                     repetido = true
                 }
             }
-            let id = tipoMsg.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
             if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
                 let notificacion = {
-                    tipo: tipoMsg,  // gda2, evento3, ...
+                    tipo: mensaje.tipo,  // gda2, evento3, ...
                     url: textoUrl+id,
-                    mensaje: info,
+                    mensaje: mensaje.notificacion,
                     fecha: new Date() //No necesito un formato específico, es solo comparativo
                 }
                 newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
@@ -95,7 +99,7 @@ class Toolbar extends React.Component {
             }
         }
         else{ //La persona que envió el mensaje se encarga de guardarlo
-            this.nuevaNotificacion(preTipo+tipoMsg, textoUrl+id, info) 
+            this.nuevaNotificacion(preTipo+mensaje.tipo, textoUrl+id, mensaje.notificacion) //preTipo+mensaje.tipo = 'new+gda'
         }   
     }
 
@@ -123,13 +127,14 @@ class Toolbar extends React.Component {
 
     inicializarNotificaciones(){
         // Verifico si hay usuario logueado y recién dsps inicializo
-        socket.connect()
         if(this.props.perfil != undefined){
             let rooms = this.obtenerIdRooms()
             for(let i = 0; i <= rooms.length-1; i++){
                 socket.emit('conectado', rooms[i])
             }
-            
+            if(this.props.perfil.rol.nivel > 2){ //Solo adm
+                socket.emit('conectado', 'adm1');
+            }
         }
     }
 
@@ -182,13 +187,13 @@ class Toolbar extends React.Component {
         
     }
 
-    nuevaNotificacion(tipoMsg, textoUrl, info){
+    nuevaNotificacion(tipoMsg, textoUrl, mensaje){
         //Creo una nueva notificación según corresponda.
         if(this.props.perfil == undefined){
             //Para que no muestre notificación si no estoy registrado
             return
         }
-        saveNotification(tipoMsg, textoUrl, info, mostrarNotificacion)
+        saveNotification(tipoMsg, textoUrl, mensaje, mostrarNotificacion)
         function mostrarNotificacion(mensaje){
             const options = {
                 style:{

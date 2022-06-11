@@ -27,10 +27,6 @@ class Chat extends React.Component {
             this.consultarUltimoMensaje(mensaje)
         })
 
-        this.props.socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
-            console.log('Failed to connect to server');
-            window.location = ('/')
-        });
         /*
         this.props.socket.on('disconnect', () => {
             // el auto connect esta deshabilitado
@@ -43,16 +39,17 @@ class Chat extends React.Component {
     //    console.log('Server desconectado') 
        // this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' que redirige a '/'
        this.props.socket.off('mensajes')
+       this.props.socket.off('msgBroadcast')
     }
 
-    msgToAnother(mensaje, detalle){
+    msgToAnother(mensaje, idChat){
         //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
-        this.props.socket.emit('msgToAnother', mensaje, detalle, this.props.id)
+      
+        this.props.socket.emit('msgToAnother', mensaje, idChat)
     }
 
     agregarMensaje(mensaje){
         //Metodo que solo se ejecuta cuando soy yo quíen mando el mensaje
-        //Usar sync y await para que la segunda función espere a la primera
         this.props.addMsg(mensaje, this.msgToAnother.bind(this))
     }
 

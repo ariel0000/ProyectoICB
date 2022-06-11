@@ -17,10 +17,26 @@ class Menu extends React.Component{
             noticias: false,
             mostrarMenu: false,  //Por defecto es false
             salas: false,
-            sesion: false
+            sesion: false,
+            tieneMiGDA: false //Para indicar si tiene GDA que le pertenece (Líder)
         }
     }
 
+    componentDidUpdate(prevProps, prevState){
+        if(prevProps.perfil != this.props.perfil){
+            this.props.socket.on('add_option_mi_gda', (mensaje) => {
+                //Tengo que comprobar si soy el dueño del gda. Aunque el gda lo crea 'x' el lider puede ser 'y'
+                if(this.props.perfil.id == mensaje.persona.id){
+                    if(this.props.perfil.gdas.length <= 0){
+                        console.log('Estoy actualizando el Menú')
+                        let newState = update(this.state, {tieneMiGDA: {$set: true}})
+                        this.setState(newState)
+                    }
+                }
+            }) //Cuando creo un gda -> el menu tiene que aparecer MiGDA
+        }
+    }
+ 
     desplegarReuniones(e){
         e.preventDefault()
         let newState = null
@@ -146,6 +162,10 @@ class Menu extends React.Component{
     render(){
         const rol = this.props.perfil.rol.nivel
         const gdas = this.props.perfil.gdas
+        if(gdas.length <= 0 && this.state.tieneMiGDA){
+            //Si no tengo gdas y además acabo de ser agregado a uno (líder) -> Actualizo gdas para que cuente como 1
+            gdas.push({id: 1}) //No necesito el id. Esto es solo para que cuente que hay uno
+        }
         const nombre = this.props.perfil.nombre
         return(
             <IconContext.Provider value={{size: "1.5em"}} >

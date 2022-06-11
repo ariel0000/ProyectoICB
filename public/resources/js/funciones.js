@@ -22,20 +22,24 @@ module.exports = {
       socket.on('mensaje', (idper, mensaje, idChat) => {
         io.to(idChat).emit('mensajes', { idper, mensaje });
       });
-      socket.on('msgToAnother', (mensaje, info, idChat) => {
+      socket.on('msgToAnother', (mensaje, idChat) => {
         socket.to(idChat).emit('msgBroadcast', mensaje);
         console.log("Id Chat actual: "+idChat)
-        socket.broadcast.to(idChat).emit('msg_notificacion', mensaje, info);
+        socket.broadcast.to(idChat).emit('msg_notificacion', mensaje);
         //   metodosAPI.guardarNotificacion(mensaje, info);
       });
-      socket.on('addPersona', (mensaje, info) => {
-        socket.broadcast.emit('add_persona', mensaje, info);
+      socket.on('addPersona', (mensaje) => {
+        socket.broadcast.emit('add_persona', mensaje);
       });
       socket.on('addNoticia', (mensaje, info) => {
         socket.broadcast.emit('add_noticia', mensaje, info);
       });
       socket.on('disconnect', () => {
         //io.to(id).emit('mensajes', {servidor: "Servidor", mensaje: `${nombre} ha abandonado la sala` });
+      });
+      socket.on('addOptionMiGda', (mensaje, idChat) => {
+        //idChat en este caso es 'adm1' 
+        socket.broadcast.to(idChat).emit('add_option_mi_gda', mensaje)
       });
     });
     return servidor;
