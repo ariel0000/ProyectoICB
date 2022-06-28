@@ -66,7 +66,8 @@ class Toolbar extends React.Component {
     }
 
     cargarNotificaciones(){
-        //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)   
+        //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)
+           
     }
 
     agregarNotificacion(preTipo, mensaje){ //Agrego como notificación el mensaje al estado
@@ -214,7 +215,7 @@ class Toolbar extends React.Component {
         }
     }
 
-    guardarNotificacion(body, mensaje, callBackMostrarNotificacion){
+/*    guardarNotificacion(body, mensaje, callBackMostrarNotificacion){
         //Guarda la notificacion en la base de datos. O actualiza la del mismo tipo.
         let tipoMsg = this.obtenerTipoNotif(body) //body es el objeto mensaje tal cuál llega del socket
         let params = {
@@ -227,7 +228,7 @@ class Toolbar extends React.Component {
         error => {
 
         })
-    }
+    } */
 
     irAUrl(e){
         //Voy  a la url del target
@@ -239,10 +240,30 @@ class Toolbar extends React.Component {
     }
 
     setearVisto(e){
-        // Tengo que poner todas las notificaciones en visto
+        // Tengo que poner todas las notificaciones en visto y actualizar el últimaVezQueVioNotificacion
+        // de la Base de Datos (Un Context podría ser necesario para actualizar los comp. que necesiten esa info)
         e.preventDefault()
         let notif = this.state.notificaciones
-     
+        let params = {
+            "sesion": {
+                "id": this.props.perfil.sesion.id,
+                "persona": this.props.perfil.sesion.persona,
+                "vio_notificacion": new Date()
+            }
+
+        }
+      /*  APIInvoker.invokePUT('/icb-api/v1/sesion/vio_notificacion', params, response => {
+            //Por medio de un Provider del Context tendría que actualizar la sesion pasada como prop
+        },
+        error=> {
+            document.getElementById("errorField").innerText = "Error: "+error.message
+            if(error.status == 401){
+                alert("Debe iniciar sesión para realizar estas operaciones")
+                window.location = ('/')
+            }
+            document.getElementById("errorField").innerText = "Error: "+error.message
+        }) */
+
         for(let i = 0; i < notif.length; i++){
             notif[i].visto = true
         }
@@ -254,7 +275,7 @@ class Toolbar extends React.Component {
         let notificaciones = this.state.notificaciones
         let notifNoVistas = 0
         for(let i = 0; i < this.state.notificaciones.length; i++){
-            if(!this.state.notificaciones[i].visto){  //Si es fale cuenta 1 notif no vista
+            if(!this.state.notificaciones[i].visto){  //Si es false cuenta 1 notif no vista
                 notifNoVistas++;
             }
         }

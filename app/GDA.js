@@ -47,8 +47,7 @@ class GDA extends React.Component{
         APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
             response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
-                    newMsjs = this.state.mensajes.reverse() //Lo doy vuelta porque dsps se vuelve 
-                    // a dar vuelta solo
+                    newMsjs = this.state.mensajes
                 }
                 newMsjs = this.state.mensajes.concat(response.body)
                 newState = update(this.state, {mensajes: {$set: newMsjs}})
@@ -68,7 +67,7 @@ class GDA extends React.Component{
     consultarUltimoMensaje(mensaje){
         //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
         console.log()
-        let newMensajes = this.state.mensajes.concat(mensaje.mensaje).reverse()
+        let newMensajes = this.state.mensajes.concat(mensaje.mensaje)//.reverse()
         let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
         this.setState(newState)
         /* APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+0+'&pageSize=1',
@@ -109,26 +108,28 @@ class GDA extends React.Component{
             }
         })
         .then(res => res.json())
-        .then(json => {
-            let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
-            let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
-            this.setState(newState) //Cambia el orden de los mensajes
-            let idChat = 'gda'+this.state.GDA.id
-            let mensaje = {
-                notificacion: 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre, //
-                mensaje: json.body,
-                persona: json.body.persona, //La persona que envió el mensaje
-                tipo: 'gda'+json.body.gda.id
+        .then((json) => {
+            if(json.ok){
+                let newMensajes = this.state.mensajes.concat(json.body)//.reverse()//Siempre se da vuelta. 24
+                let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
+                this.setState(newState) //Cambia el orden de los mensajes
+                let idChat = 'gda'+this.state.GDA.id
+                let mensaje = {
+                    notificacion: 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre, //
+                    mensaje: json.body,
+                    persona: json.body.persona, //La persona que envió el mensaje
+                    tipo: 'gda'+json.body.gda.id
+                }
+                callbackF(mensaje, idChat);
+                //el callback incluye el mensaje tal cual es guardado en la BdD
             }
-            callbackF(mensaje, idChat);
-            //el callback incluye el mensaje tal cual es guardado en la BdD
-        })
-        .catch(err => {
-            if(err.status == 401){
+            else if(json.status == 401){
                 window.localStorage.removeItem("token")
                 window.localStorage.removeItem("codigo")
                 window.location = ('/')
             }
+            })
+        .catch(err => {
             console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)
         })
     }

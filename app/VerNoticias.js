@@ -8,7 +8,8 @@ class VerNoticias extends React.Component {
         super(props)
         this.state = {
             mover: true,
-            noticias: []
+            noticias: [],
+            isLoaded: false
         }
     }
 
@@ -38,7 +39,6 @@ class VerNoticias extends React.Component {
                 //Tengo que ponerle "active" al primer elemento de la lista de imágenes
                 div_carousel.firstChild.className = 'carousel-item active'
             }
-        
         }
     }
 

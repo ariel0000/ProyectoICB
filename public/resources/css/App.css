@@ -208,4 +208,5 @@ html.modal-mode{  /* Para el componente Modal: Hace desaparecer el scroll en los
 /* Spinner de mi creación para toda la aplicación */
 img.loading {
     background: transparent url(/img/Spinner-2.gif) no-repeat scroll center center;
+    min-height: 150px;
 }

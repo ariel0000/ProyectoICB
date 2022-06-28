@@ -26,13 +26,6 @@ class Chat extends React.Component {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
             this.consultarUltimoMensaje(mensaje)
         })
-
-        /*
-        this.props.socket.on('disconnect', () => {
-            // el auto connect esta deshabilitado
-           // this.props.socket.connect(); No puedo hacer esto porque no me reconecto a las rooms necesarias
-            window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
-        })*/
     }
 
     componentWillUnmount(){
@@ -74,7 +67,7 @@ class Chat extends React.Component {
         this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, [this.props.id]) //id del chat
         this.setState(newState)
     }
-
+    /*
     static getDerivedStateFromProps(props, state){
         if(state.mensajes != props.mensajes){
             return {
@@ -83,15 +76,12 @@ class Chat extends React.Component {
             }
         }
         return null
-    }
+    }  */
 
     componentDidUpdate(prevsProps, prevState, snapshot){
         //Utilizo esto solo para asegurarme que se scrolleo hasta el final
 
-        if(this.state.pagina == 0){
-            //Solo si la página es 0 scrolleo hasta el último elemento
-            this.scrollearHastaUltimoElemento();
-        }
+        this.scrollearHastaUltimoElemento()
     }
 
     scrollearHastaUltimoElemento(){
@@ -127,7 +117,7 @@ class Chat extends React.Component {
            // socket.disconnect() Esto rompe todo, entender que a veces la pantalla se ve pero esta onBlur (PC)
         }
 
-        let mensajes = this.state.mensajes
+        let mensajes = this.props.mensajes
         return (
             <div className="infoApp container-fluid" id='ChatComponent'>
                 <div className="row mt-1" >
