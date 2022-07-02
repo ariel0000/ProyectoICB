@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaBell, FaBellSlash, FaBars} from 'react-icons/fa'
+import { FaBell, FaBellSlash, FaBars, FaHome} from 'react-icons/fa'
 //import {GrLogin} from 'react-icons/gr'
 import { browserHistory } from 'react-router'
 import { IconContext } from "react-icons";
@@ -239,6 +239,13 @@ class Toolbar extends React.Component {
         }
     }
 
+
+    clickEnHome(e){
+        //Lo que hay que hacer cuando hago click en el ícono Home
+        browserHistory.push('/MainApp/')
+        e.preventDefault()
+    }
+
     setearVisto(e){
         // Tengo que poner todas las notificaciones en visto y actualizar el últimaVezQueVioNotificacion
         // de la Base de Datos (Un Context podría ser necesario para actualizar los comp. que necesiten esa info)
@@ -317,6 +324,10 @@ class Toolbar extends React.Component {
                                 </li>
                                 )}
                             </ul>
+                            <button type="button" className="btn btn-white text-primary m-1 position-relative"
+                                id="homeButton" onClick={this.clickEnHome.bind(this)} >
+                                <FaHome />
+                            </button>
                             </When>
                         <Otherwise>
                             {/* No hay usuario logueado */}
