@@ -288,8 +288,8 @@ class Toolbar extends React.Component {
         }
     return (
         <IconContext.Provider value={{size: "15px"}}>
-        <div className="row toolbar">
-            <div className="col-xs-12 col-sm-12 col-md-12">
+        <div className="row toolbar sticky-top">
+            <div className="col-xs-12 col-sm-12 col-md-12 sticky-top">
                 <div className="d-flex justify-content-end text-primary bg-white align-items-center">
                     <div className="me-auto p-1 bd-highlight order-1 order-sm-0 order-md-0 dropdown" >
                         <Choose>

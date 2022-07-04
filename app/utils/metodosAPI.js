@@ -47,5 +47,5 @@ export const saveNotification = (tipoMsg, textoUrl, info, callbackF) => {
 }
 
 export const otraFuncion = (valor) => {
-    alert("Soy una función importada");
+    alert("Soy una función a importar");
 }

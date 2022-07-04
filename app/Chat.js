@@ -142,7 +142,7 @@ class Chat extends React.Component {
                            {/* <label className="form-label">Mensajes del servidor</label> */ }
                             <textarea id="mensaje" rows="1" cols="1" className="form-control"
                                 value={this.state.mensaje} onChange={this.setMensaje.bind(this)} />
-                                <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
+                            <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                         </div>
                     </form>
                     <WindowFocusHandler beginFocus={this.ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
