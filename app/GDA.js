@@ -44,12 +44,12 @@ class GDA extends React.Component{
         //tengo que cargar los mensajes que corresponden a este GDA. 
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState, newMsjs
-        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=12',
+        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=10',
             response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
                     newMsjs = this.state.mensajes
                 }
-                newMsjs = this.state.mensajes.concat(response.body)
+                newMsjs = response.body.concat(this.state.mensajes)
                 newState = update(this.state, {mensajes: {$set: newMsjs}})
                 this.setState(newState)
             },

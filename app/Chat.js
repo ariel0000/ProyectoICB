@@ -10,7 +10,8 @@ class Chat extends React.Component {
         this.state = {
             mensajes: [],
             mensaje: "",
-            pagina: 0
+            pagina: 0,
+            firstTime: true
         }
     }
 
@@ -27,6 +28,14 @@ class Chat extends React.Component {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
             this.consultarUltimoMensaje(mensaje)
         })
+    }
+
+    
+    componentDidUpdate(prevsProps, prevState, snapshot){
+        //Utilizo esto solo para asegurarme que se scrolleo hasta el final
+        if(this.state.firstTime){ //Entro la primera vez que renderizo. firstTime se actualiza en el scroll a false
+            this.scrollearHastaUltimoElemento()
+        }
     }
 
     componentWillUnmount(){
@@ -78,25 +87,20 @@ class Chat extends React.Component {
         }
         return null
     }  */
-
-    componentDidUpdate(prevsProps, prevState, snapshot){
-        //Utilizo esto solo para asegurarme que se scrolleo hasta el final
-
-        this.scrollearHastaUltimoElemento()
-    }
-
+ 
     scrollearHastaUltimoElemento(){
         //Se encarga de correr el chat hasta el último elemento
         document.getElementById('caja-chat').scrollIntoView();
     }
 
     onScroll(e){
-        //Tengo que averiguar si el scroll llegó al tope para traer nuevos mensajes
+        //Tengo que averiguar si el scroll llegó al tope para traer nuevos mensajes.
+        //Además actualizo en valor firstTime
         let distanciaAlTope = e.target.scrollTop
-        if(distanciaAlTope <= 5){
+        if(distanciaAlTope <= 10){
             this.props.getMensajes(this.state.pagina+1);
-            e.target.scrollTop = 1000
-            let newState = update(this.state, {pagina: {$set: this.state.pagina+1}})
+            e.target.scrollTop = 300
+            let newState = update(this.state, {pagina: {$set: this.state.pagina+1}, firstTime: {$set: false}})
             this.setState(newState)
         }
     }
@@ -124,6 +128,9 @@ class Chat extends React.Component {
                 <div className="row mt-1" >
                     <div  className={this.props.esCelu? "col-12 bg-info p-2 caja-chat-celu": "col-12 bg-info p-2 caja-chat"} 
                         onScroll={this.onScroll.bind(this)} >
+                        <br/>
+                        <br/>
+                        <br/>
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
                         'd-flex flex-column ms-auto mensaje mio p-1 mb-1': 'd-flex flex-column me-auto mensaje no-mio p-1 mb-1' }>

@@ -13,8 +13,7 @@ class VerNoticias extends React.Component {
         this.state = {
             mover: true,
             noticias: [],
-            indiceNoticia: 0,
-            noticiaInterval: null
+            indiceNoticia: 0
         }
     }
 
@@ -60,11 +59,6 @@ class VerNoticias extends React.Component {
         */
     }
 
-    quitarAvanceNoticia(){
-        //Se ejecuta cuando interfiero en la ejecución normal del avance de las noticias
-        clearInterval(this.myInterval)
-    }
-
     componentDidMount() {
         //Tengo que cargar las noticias y establecer el interval mediante funcion (this.primerNoticia())
         this.primerNoticia()
@@ -82,6 +76,10 @@ class VerNoticias extends React.Component {
                 }
                 etiqueta.innerHtml = error.message
             })
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.myInterval)
     }
 
     borrarNoticia(e) {
