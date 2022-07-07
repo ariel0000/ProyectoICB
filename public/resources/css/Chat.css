@@ -4,14 +4,19 @@
 }
 
 .mensaje{
+    max-width: 175px;
+    width: fit-content
+}
+
+.mio{
     border-radius: 5px;
-    background-color: coral;
+    background-color: lightblue;
     color: white;
 }
 
-.mensaje-mio{
+.no-mio{
     border-radius: 5px;
-    background-color: orangered;
+    background-color: lightskyblue;
     color: white;
 }
 
@@ -20,11 +25,10 @@
     max-height: 250px;
 }
 
-.caja-chat-celu{
-    overflow-y: scroll;
-    max-height: 200px;
-}
-
 .cien-por-cien{
     height: 100%
+}
+
+.nombre-chat{
+    font-size: 10px;
 }

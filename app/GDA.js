@@ -44,7 +44,7 @@ class GDA extends React.Component{
         //tengo que cargar los mensajes que corresponden a este GDA. 
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState, newMsjs
-        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
+        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=12',
             response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
                     newMsjs = this.state.mensajes
@@ -110,7 +110,7 @@ class GDA extends React.Component{
         .then(res => res.json())
         .then((json) => {
             if(json.ok){
-                let newMensajes = this.state.mensajes.concat(json.body)//.reverse()//Siempre se da vuelta. 24
+                let newMensajes = this.state.mensajes.concat(json.body)
                 let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
                 this.setState(newState) //Cambia el orden de los mensajes
                 let idChat = 'gda'+this.state.GDA.id

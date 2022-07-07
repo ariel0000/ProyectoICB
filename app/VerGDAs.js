@@ -197,7 +197,7 @@ class VerGDAs extends React.Component {
                                                                     {gda.dia} <br />
                                                                     {gda.horario}
                                                                 </div>
-                                                                <div className="warning text-red p-0 mt-0">
+                                                                <div className="warning text-wrap text-red p-0 mt-0">
                                                                     {gda.edad}
                                                                 </div>
                                                             </div>

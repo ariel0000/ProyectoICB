@@ -1,6 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update'
 import WindowFocusHandler from './WindowsFocusHandler';
+import Mensaje from './Mensaje'
 
 // function Chat({nombre, id, pathname}) {  //Estos atributos son pasados como props 
 class Chat extends React.Component {
@@ -125,15 +126,9 @@ class Chat extends React.Component {
                         onScroll={this.onScroll.bind(this)} >
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
-                        'd-flex justify-content-end': 'd-flex justify-content-start' }>
-                            <div style={(this.props.idpersona == e.persona.id)? 
-                            {textAlign: 'end'}: {textAlign: 'start'}} 
-                            className={(this.props.idpersona == e.persona.id)?
-                            "mensaje-mio p-1 mb-1": "mensaje p-1 mb-1"} >
-                                <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
-                            <br />
-                                {e.mensaje}
-                            </div>
+                        'd-flex flex-column ms-auto mensaje mio p-1 mb-1': 'd-flex flex-column me-auto mensaje no-mio p-1 mb-1' }>
+                            <div className='text-nowrap nombre-chat'>{e.persona.nombre} {e.persona.apellido}</div>
+                            <Mensaje mensaje={e.mensaje} />
                         </div>)} 
                         <div id='caja-chat'></div>{/* Uso este div para scrollear automáticamente*/}
                     </div>
