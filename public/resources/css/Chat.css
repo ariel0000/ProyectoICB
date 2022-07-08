@@ -5,24 +5,28 @@
 
 .mensaje{
     max-width: 175px;
-    width: fit-content
+    width: fit-content;
+    color: white;
+    border-radius: 5px;
 }
 
-.mio{
-    border-radius: 5px;
+.no-mio.hombre{
     background-color: lightblue;
-    color: white;
+}
+.mio.hombre{
+    background-color: dodgerblue;
 }
 
-.no-mio{
-    border-radius: 5px;
-    background-color: lightskyblue;
-    color: white;
+.no-mio.mujer{
+    background-color: hotpink;
+}
+.mio.mujer{
+    background-color: deeppink;
 }
 
 .caja-chat{
     overflow-y: scroll;
-    max-height: 250px;
+    max-height: 245px;
 }
 
 .cien-por-cien{
@@ -30,5 +34,5 @@
 }
 
 .nombre-chat{
-    font-size: 10px;
+    font-size: 12px;
 }

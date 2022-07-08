@@ -178,7 +178,7 @@ class VerGDAs extends React.Component {
                            </Choose>
                         </blockquote>
                         <blockquote className="text-center">
-                            <h6 className="text-white" id="errorField"></h6>
+                            <h6 className="bg-danger rounded-2" id="errorField"></h6>
                         </blockquote>
                         <div className="row justify-content-center m-1" >
                             <For each="gda" index="index" of={gdas} >

@@ -74,21 +74,18 @@ class Toolbar extends React.Component {
         let textoUrl = this.state.mapaDeUrls.get(mensaje.tipo.replace(/[^a-z]/gi, '')); //Quito el/los n° del mensaje.tipo
         let id = mensaje.tipo.replace(/\D/g, "");  //obtengo el numero a través de una expresión regular
         if(mensaje.persona.id != this.props.perfil.id){ //La persona que envió el mensaje se encarga de guardarlo
+            this.mostrarNotificacion(mensaje.notificacion) //Las personas que no crearon la notif, la ven
             let newState 
-            let repetido = false 
-            
-        /* this.state.notificaciones.forEach((tipo, url) => { //tipo incluye su id (ej: gda2)
-                if(tipo == tipoMsg){ //Si es del mismo tipo tengo que indicarlo para no agregarlo dsps
-                    repetido = true
-                }
-            })*/
-            for(let i = 0; i < this.state.notificaciones.length; i++){ 
-                //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
-                if(this.state.notificaciones[i].tipo == mensaje.tipo){ //mensaje.tipo = gda2 (Ej)
-                    repetido = true
+            const repetido = () => {
+                for(let i = 0; i < this.state.notificaciones.length; i++){ 
+                    //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
+                    if(this.state.notificaciones[i].tipo == mensaje.tipo){ //mensaje.tipo = gda2 (Ej)
+                        return true
+                    }
+                    return false
                 }
             }
-            if(!repetido){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
+            if(!repetido()){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
                 let notificacion = {
                     tipo: mensaje.tipo,  // gda2, evento3, ...
                     url: textoUrl+id,
@@ -104,6 +101,7 @@ class Toolbar extends React.Component {
         }   
     }
 
+    /* //No se usa más. El tipo de notificacion viene incluído en el mensaje
     obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
         if(mensaje.gda != undefined){
             return "gda"+mensaje.gda.id
@@ -114,12 +112,7 @@ class Toolbar extends React.Component {
         else if(mensaje.noticia != undefined){
             return "nose"+mensaje.noticia.id
         }
-    }
-
-    redirigir(e){
-        e.preventDefault()
-        browserHistory.push('/login')
-    }
+    } */
 
     prepararSocket(){
         //Inicializa el socket y me uno a las rooms correspondientes
@@ -162,9 +155,9 @@ class Toolbar extends React.Component {
         let newState
         function checkNotificationPromise() { //Para las vers. que no son compatibles con el Promise
             try {
-              Notification.requestPermission().then();
+                Notification.requestPermission().then();
             } catch(e) {
-              return false;
+                return false;
             }
             return true;
         }
@@ -177,7 +170,7 @@ class Toolbar extends React.Component {
             newState = update(this.state, {letNotification: {$set: !this.state.letNotification}})
             this.setState(newState)
             
-        })
+            })
         }
         else{
             Notification.requestPermission(function(){
@@ -194,25 +187,26 @@ class Toolbar extends React.Component {
             //Para que no muestre notificación si no estoy registrado
             return
         }
-        saveNotification(tipoMsg, textoUrl, mensaje, mostrarNotificacion)
-        function mostrarNotificacion(mensaje){
-            const options = {
-                style:{
-                    main: {
-                        background: "#31d2f2",
-                        color: "white",
-                        position: 'fixed', 
-                        left: '0px',
-                        right: '0px',
-                        bottom: '0px'
-                    }
-                },
-                settings: {
-                    duration: 5000
+        saveNotification(tipoMsg, textoUrl, mensaje)
+    }
+
+    mostrarNotificacion(mensaje){
+        const options = {
+            style:{
+                main: {
+                    background: "#31d2f2",
+                    color: "white",
+                    position: 'fixed', 
+                    left: '0px',
+                    right: '0px',
+                    bottom: '0px'
                 }
+            },
+            settings: {
+                duration: 5000
             }
-            iqwerty.toast.toast(mensaje, options);
         }
+        iqwerty.toast.toast(mensaje, options);
     }
 
 /*    guardarNotificacion(body, mensaje, callBackMostrarNotificacion){

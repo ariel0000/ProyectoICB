@@ -28,7 +28,7 @@ class CrearGDA extends React.Component{
         }
     }
 
-    handleChange(e){  //Es para las listas y no para el input. (Los input usan 'onChange')
+    handleChange(e){  //Es para las listas y no para el input
         e.preventDefault()
         let value = e.target.title  //Obtengo la nueva opción elegida
         let id = e.target.parentElement.parentElement.title //Obtengo el id del input a escribir. El mismo lo pongo en el <ul> como el atributo "title"

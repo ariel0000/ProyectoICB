@@ -73,9 +73,9 @@ class Chat extends React.Component {
         if(this.state.mensaje == ''){
             return
         }
-        let newState = update(this.state, {mensaje: {$set: ''}})
+        let newState = update(this.state, {mensaje: {$set: ''}, firstTime: {$set: true}})
         this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, [this.props.id]) //id del chat
-        this.setState(newState)
+        this.setState(newState, this.scrollearHastaUltimoElemento()) //
     }
     /*
     static getDerivedStateFromProps(props, state){
@@ -133,7 +133,8 @@ class Chat extends React.Component {
                         <br/>
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
-                        'd-flex flex-column ms-auto mensaje mio p-1 mb-1': 'd-flex flex-column me-auto mensaje no-mio p-1 mb-1' }>
+                        'd-flex flex-column ms-auto mensaje mio p-1 mb-1 '+this.props.sexo+'': 
+                            'd-flex flex-column me-auto mensaje no-mio p-1 mb-1 '+this.props.sexo+'' }>
                             <div className='text-nowrap nombre-chat'>{e.persona.nombre} {e.persona.apellido}</div>
                             <Mensaje mensaje={e.mensaje} />
                         </div>)} 

@@ -134,20 +134,17 @@ class GDA extends React.Component{
         })
     }
 
-/*    addMsg(mensaje){
-        let respuesta = this.agregarMensaje(mensaje) //Retorno un Promise (una Promesa)
-        console.log('typeOff: '+typeof(respuesta))
-        respuesta
-            .then(msgsRta => {
-                let newState = update(this.state, {mensajes: {$splice: [[0, 0, msgsRta]]}})
-                this.setState(newState) 
-            })
-            .catch(err => {
-                console.log('Error: '+err)
-            })
-    }*/
-
     render() {
+        const gdaHombres = () => {
+            if(this.state.GDA.sexo == 'Masculino'){
+                return "hombre"
+            }
+            return "mujer"
+        }
+        let sexo = "hombre"
+        if(this.state.GDA != null){
+            sexo = gdaHombres()
+        }
         return(
             <div className="infoApp cien-por-cien">
                 <blockquote className="text-center mb-1 pb-1 mt-0">
@@ -161,7 +158,8 @@ class GDA extends React.Component{
                                 getMensajes={this.consultarMensajes.bind(this)} 
                                 mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
                                 lastMsj={this.consultarUltimoMensaje.bind(this)} 
-                                socket= {this.props.socket} pathname={this.props.location.pathname} />
+                                socket= {this.props.socket} pathname={this.props.location.pathname}
+                                sexo={sexo} />
                         </div>
                     </div>
                 </div>

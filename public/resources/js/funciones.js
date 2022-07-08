@@ -39,7 +39,7 @@ module.exports = {
       });
       socket.on('addOptionMiGda', (mensaje, idChat) => {
         //idChat en este caso es 'adm1' 
-        socket.broadcast.to(idChat).emit('add_option_mi_gda', mensaje)
+        socket.broadcast.to(idChat).emit('add_option_mi_gda', mensaje) //Para los admin y los integrantes tmbn
       });
     });
     return servidor;
