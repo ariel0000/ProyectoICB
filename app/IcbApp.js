@@ -38,7 +38,10 @@ class IcbApp extends React.Component {
                 window.localStorage.setItem("token", response.body.token) //El nuevo token
                 window.localStorage.setItem("codigo", response.body.codigo)
                 APIInvoker.invokeGET('/icb-api/v1/usuario/'+codigo, response => {  //APIInvooker anidado :O
-                    this.setState(update(this.state, { profile: { $set: response.body } }))
+                    let estado = response.body
+                    let fechaVioNotif = new Date(response.body.vio_notificacion)
+                    estado.vio_notificacion = new Date(fechaVioNotif.getTime()) //Hora de Argentina
+                    this.setState(update(this.state, { profile: { $set: estado } }))
                     browserHistory.push('/MainApp/bienvenido')
                 },
                 error => {
@@ -53,6 +56,12 @@ class IcbApp extends React.Component {
         }
     }
 
+    actualizarEstado(target, valor){
+        // Función pasada como prop para que permita actualizar el estado (profile) y renderizar los componentes
+        let newState = update(this.state, {profile: {[target]: {$set: valor}}})
+        this.setState(newState)
+    }
+
     render() {
      //   let menu = this.state.menu
         let esCelu = false
@@ -65,7 +74,7 @@ class IcbApp extends React.Component {
             <div className="container-fluid px-2 div-principal">
                 {this.state.profile != null?
                     <Toolbar perfil={this.state.profile} socket={socket} pathname={this.props.location.pathname}
-                    params={this.props.location.pathname} />
+                    actualizarEstado={this.actualizarEstado.bind(this)} />
                 :
                     <Toolbar />
                 }

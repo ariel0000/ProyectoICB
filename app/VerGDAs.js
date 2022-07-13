@@ -8,7 +8,7 @@ class VerGDAs extends React.Component {
         super(props)
         this.state = {
             gdas: [],
-            gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado' como  ya que siempre se pasa a null
+            gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado'  ya que siempre se pasa a null
                                  // al momento de redirigir
             paraUsuario: false,  //Por defecto este componente es accedido por algún lider para ver todos los gdas
             //Si paraUsuario es true --> Cargará los gdas del usuario para luego acceder a cada uno de ellos
@@ -64,7 +64,6 @@ class VerGDAs extends React.Component {
             this.setState(newState)
         }
         console.log('click outside')
-        
     }
 
     handleClickGDA(e) {
