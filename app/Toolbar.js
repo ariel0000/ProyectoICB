@@ -31,16 +31,8 @@ class Toolbar extends React.Component {
         }
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        if(prevProps.perfil != this.props.perfil){
-            //Hago esta comparación acá porque en DidMount el prop es nulo
-            this.prepararSocket()
-        }
-     }
-
     componentDidMount(){
-     //   this.prepararSocket() - Lo saco de acá y lo paso a componentDidUpdate
-        socket.on('msg_notificacion', (mensaje) => { //mensaje es un objeto --> Ver GDA línea 117
+        socket.on('msj_notificacion', (mensaje) => { //mensaje es un objeto --> Ver GDA línea 117
             this.agregarMsjNotificacion(mensaje)
             //mensaje en la función de arriba representa al body
         })
@@ -67,7 +59,10 @@ class Toolbar extends React.Component {
     componentDidUpdate(prevsProps, prevState, snapshot){
         if(this.props != prevsProps ){
             if(this.props.perfil != undefined){
-                this.cargarNotificaciones()
+                this.prepararSocket();
+                if(prevState == this.state){
+                    this.cargarNotificaciones()
+                }
             }
         }
     }
@@ -87,6 +82,7 @@ class Toolbar extends React.Component {
                     else{
                         notificacion.visto =false
                     }
+                    notificacion.fecha = fechaNotifBdD
                     notifConVisto.push(notificacion)
                 })
                 return notifConVisto
@@ -128,7 +124,7 @@ class Toolbar extends React.Component {
     guardarNotificacion(preTipo, textoUrl, mensaje){ //
         //Tengo que chequear si soy el que creó el 'evento-mensaje' y proceder a guardarlo. Sino a mostrarlo
         const despuesDeGuardar = (notificacion) => {
-            console.log("Se guardó la notificación: "+notificacion.mensaje)
+            console.log("Se guardó la notificación: "+notificacion.body.mensaje)
         }
         if(mensaje.persona.id == this.props.perfil.id){ //Si yo mandé el msj me encargo de guardarlo
             saveNotification(preTipo+mensaje.tipo, textoUrl, mensaje.notificacion, despuesDeGuardar) 
@@ -138,8 +134,8 @@ class Toolbar extends React.Component {
  
     //Próximo a 
     agregarNotificacion(preTipo, url, mensaje){ //Agrego como notificación el mensaje al estado y lo muestro
-
-            const repetido = () => {
+        let newState, notificacion
+        const repetido = () => {
                 for(let i = 0; i < this.state.notificaciones.length; i++){ 
                     //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
                     if(this.state.notificaciones[i].tipo == preTipo+mensaje.tipo){ //mensaje.tipo = gda2 (Ej)
@@ -148,17 +144,35 @@ class Toolbar extends React.Component {
                     return false
                 }
             }
-            if(!repetido()){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
-                let notificacion = {
-                    tipo: preTipo+mensaje.tipo,  // gda2, evento3, ...
-                    url: url,
-                    mensaje: mensaje.notificacion,
-                    fecha: new Date() //Ya nace con el timeZone que declara el navegador (UTC-3 para mí)
+
+        const actualizarFechaNotificacion = () => {
+            
+            for(let i = 0; i < this.state.notificaciones.length; i++){ 
+                //Determina si el tipo de notificación es repetido con uno anterior (gda3 = gda3)
+                if(this.state.notificaciones[i].tipo == preTipo+mensaje.tipo){ //mensaje.tipo = gda2 (Ej)
+                    notificacion = this.state.notificaciones[i]
+                    notificacion.fecha = new Date()
+                    notificacion.visto = false //porque fue creada recién
+                    newState = update(this.state, {notificaciones: {$splice: [[i, 1, notificacion]]}})
+                    
                 }
-                let newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
-                this.setState(newState)
+                return 
             }
-        } 
+        }
+        if(!repetido()){ //Si no es true --> tengo que agregar la nueva notificación (tipoMsg, url, mensaje)
+            let notificacion = {
+                tipo: preTipo+mensaje.tipo,  // gda2, evento3, ...
+                url: url,
+                mensaje: mensaje.notificacion,
+                fecha: new Date() //Ya nace con el timeZone que declara el navegador (UTC-3 para mí)
+            }
+            newState = update(this.state, {notificaciones: {$splice: [[0, 0, notificacion]]}})
+        }
+        else{ //Si la notificacion ya existe tengo que actualizarle la fecha y seteo el visto en false
+            actualizarFechaNotificacion()
+        }
+        this.setState(newState)
+    } 
 
     prepararSocket(){
         //Inicializa el socket y me uno a las rooms correspondientes
@@ -266,13 +280,6 @@ class Toolbar extends React.Component {
         // de la Base de Datos
         e.preventDefault()
         let notif = this.state.notificaciones
-        let params = {
-            "sesion": {
-                "id": this.props.perfil.sesion.id,
-                "persona": this.props.perfil.sesion.persona,
-                "vio_notificacion": new Date()
-            }
-        }
         this.actualizarVioNotificacion();
         for(let i = 0; i < notif.length; i++){
             notif[i].visto = true
@@ -285,7 +292,7 @@ class Toolbar extends React.Component {
         APIInvoker.invokePUT('/icb-api/v1/sesion/vio_notificacion/'+this.props.perfil.id, null, response => {
             //Por medio de un Provider del Context tendría que actualizar la sesion pasada como prop
             let fechaVioNotif = new Date(response.body.vio_notificacion)
-            let estado = response.body
+            let estado = response.body //sería una sesionDTO la que devuelve
             estado.vio_notificacion = new Date(fechaVioNotif.getTime())
             this.props.actualizarEstado('sesion', estado)
           //  console.log('Hora del response: '+valor.vio_notificacion) Funcionó bien

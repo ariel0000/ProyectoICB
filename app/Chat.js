@@ -47,8 +47,8 @@ class Chat extends React.Component {
 
     msgToAnother(mensaje, idChat){
         //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
-      
         this.props.socket.emit('msgToAnother', mensaje, idChat)
+       // this.props.socket.emit('msjNotificacion', mensaje, idChat)
     }
 
     agregarMensaje(mensaje){
