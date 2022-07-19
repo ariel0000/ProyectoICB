@@ -61,37 +61,81 @@ class Toolbar extends React.Component {
         else{
             newState = update(this.state, {letNotification: {$set: false}})
         }
-        this.cargarNotificaciones()
         this.setState(newState)
+    }
+
+    componentDidUpdate(prevsProps, prevState, snapshot){
+        if(this.props != prevsProps ){
+            if(this.props.perfil != undefined){
+                this.cargarNotificaciones()
+            }
+        }
     }
 
     cargarNotificaciones(){
         //Se encarga de comprobar que notificaciones no vio el usuario y de cargarlas en la lista (state.notificaciones)
+        APIInvoker.invokeGET('/icb-api/v1/notificacion/'+[this.props.perfil.id], response => { 
+            //Acá tengo que agregar las notificaciones al estado configurando si fue vista cada una
+            function setearVisto(notificaciones, scope){
+                let notifConVisto = [] //Para cargar el atributo visto en todas las notif.
+                notificaciones.forEach(notificacion => {
+                    let fechaNotifBdD = new Date(notificacion.fecha)
+                    let dateVioNotif = scope.props.perfil.sesion.vio_notificacion
+                    if(fechaNotifBdD.getTime() < dateVioNotif.getTime()){
+                        notificacion.visto = true
+                    }
+                    else{
+                        notificacion.visto =false
+                    }
+                    notifConVisto.push(notificacion)
+                })
+                return notifConVisto
+            }
 
-    }
-
-    guardarNotificacion(preTipo, textoUrl, notificacion){ //
-        //Tengo que chequear si soy el que creó el 'evento-mensaje' y proceder a guardarlo. Sino a mostrarlo
-        if(mensaje.persona.id == this.props.perfil.id){ //Si yo mandé el msj me encargo de guardarlo
-            this.nuevaNotificacion(preTipo+mensaje.tipo, textoUrl, notificacion) 
-            //preTipo+mensaje.tipo = Ej: 'msj+gda1' , textoUrl: /MainApp/verGdasEdit/1, 'Nuevos mensajes en...'
-        }
+            let notificaciones = setearVisto(response.body, this)
+            let newState = update(this.state, {notificaciones: {$set: notificaciones}})
+            this.setState(newState)
+        }, 
+        error => {
+            if (error.status == 401) {
+                alert("Debe iniciar sesión para poder entrar aquí")
+                window.localStorage.removeItem("token")
+                window.localStorage.removeItem("codigo")
+                window.location = ('/')
+            }
+            else {
+                //document.getElementById("errorField").innerText = "Error: " + error.message
+                console.log("Error: "+error.message)
+            }
+        })
     }
 
     agregarMsjNotificacion(mensaje){
         //Agrego como notificacion el mensaje al estado y la muestro (Función general para Msj)
+        console.log("LLego la llamada de msg_notificacion")
         let textoUrl = this.state.mapaDeUrls.get(mensaje.tipo.replace(/[^a-z]/gi, '')); //Quito el/los n° del mensaje.tipo
         //Obtengo el url de la notificación por medio del mapa que esta en state
         let id = mensaje.tipo.replace(/\D/g, "");  //obtengo el id que se adjunta al url
        
         if(mensaje.persona.id != this.props.perfil.id){
-            this.agregarNotificacion('msj',textoUrl+id, mensaje) //Agrego la notificación porque soy parte de los receptores
+            this.agregarNotificacion('msj',textoUrl+id, mensaje) //Agrego la notificación porque soy receptor
         }
         else{ //Soy el emisor de la notificación
-            this.guardarNotificacion('msj', textoUrl+id,  mensaje.notificacion) //Solo el creador guarda la notif.
+            this.guardarNotificacion('msj', textoUrl+id,  mensaje) //Solo el creador guarda la notif.
         }
     }
 
+    guardarNotificacion(preTipo, textoUrl, mensaje){ //
+        //Tengo que chequear si soy el que creó el 'evento-mensaje' y proceder a guardarlo. Sino a mostrarlo
+        const despuesDeGuardar = (notificacion) => {
+            console.log("Se guardó la notificación: "+notificacion.mensaje)
+        }
+        if(mensaje.persona.id == this.props.perfil.id){ //Si yo mandé el msj me encargo de guardarlo
+            saveNotification(preTipo+mensaje.tipo, textoUrl, mensaje.notificacion, despuesDeGuardar) 
+            //preTipo+mensaje.tipo = Ej: 'msj+gda1' , textoUrl: /MainApp/verGdasEdit/1, 'Nuevos mensajes en...'
+        }
+    }
+ 
     //Próximo a 
     agregarNotificacion(preTipo, url, mensaje){ //Agrego como notificación el mensaje al estado y lo muestro
 
@@ -115,19 +159,6 @@ class Toolbar extends React.Component {
                 this.setState(newState)
             }
         } 
-
-    /* //No se usa más. El tipo de notificacion viene incluído en el mensaje
-    obtenerTipoNotif(mensaje){ //Obtengo el tipo de notificación (gda, evento, privateMsg, ...)
-        if(mensaje.gda != undefined){
-            return "gda"+mensaje.gda.id
-        }
-        else if(mensaje.evento != undefined){
-            return "evento"+mensaje.evento.id
-        }
-        else if(mensaje.noticia != undefined){
-            return "nose"+mensaje.noticia.id
-        }
-    } */
 
     prepararSocket(){
         //Inicializa el socket y me uno a las rooms correspondientes
@@ -196,15 +227,6 @@ class Toolbar extends React.Component {
         
     }
 
-    nuevaNotificacion(tipoMsg, textoUrl, mensaje){
-        //Creo una nueva notificación según corresponda.
-        if(this.props.perfil == undefined){
-            //Para que no muestre notificación si no estoy registrado
-            return
-        }
-        saveNotification(tipoMsg, textoUrl, mensaje)
-    }
-
     mostrarNotificacion(mensaje){
         const options = {
             style:{
@@ -224,21 +246,6 @@ class Toolbar extends React.Component {
         iqwerty.toast.toast(mensaje, options);
     }
 
-/*    guardarNotificacion(body, mensaje, callBackMostrarNotificacion){
-        //Guarda la notificacion en la base de datos. O actualiza la del mismo tipo.
-        let tipoMsg = this.obtenerTipoNotif(body) //body es el objeto mensaje tal cuál llega del socket
-        let params = {
-            tipo: tipoMsg,
-            url: ''
-        }
-        APIInvoker.invokePOST('/icb-api/v1/notificacion', params, response => {
-
-        },
-        error => {
-
-        })
-    } */
-
     irAUrl(e){
         //Voy  a la url del target
         e.preventDefault()
@@ -247,7 +254,6 @@ class Toolbar extends React.Component {
             browserHistory.push(url)
         }
     }
-
 
     clickEnHome(e){
         //Lo que hay que hacer cuando hago click en el ícono Home

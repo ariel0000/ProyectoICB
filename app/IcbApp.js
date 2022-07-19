@@ -39,14 +39,16 @@ class IcbApp extends React.Component {
                 window.localStorage.setItem("codigo", response.body.codigo)
                 APIInvoker.invokeGET('/icb-api/v1/usuario/'+codigo, response => {  //APIInvooker anidado :O
                     let estado = response.body
-                    let fechaVioNotif = new Date(response.body.vio_notificacion)
-                    estado.vio_notificacion = new Date(fechaVioNotif.getTime()) //Hora de Argentina
+                    let fechaVioNotif = new Date(response.body.sesion.vio_notificacion)
+                    let fechaUltimaVezOnline = new Date(response.body.sesion.ultima_vez_online)
+                    estado.sesion.vio_notificacion = new Date(fechaVioNotif.getTime()) //Hora de Argentina
+                    estado.sesion.ultima_vez_online = new Date(fechaUltimaVezOnline.getTime())
                     this.setState(update(this.state, { profile: { $set: estado } }))
                     browserHistory.push('/MainApp/bienvenido')
                 },
                 error => {
                     alert("Error al consultar usuario"+error.message);  //Error al consultar "obtenerDatosPorCódigo"
-                })  
+                })
             },
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")

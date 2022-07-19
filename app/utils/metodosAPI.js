@@ -19,7 +19,7 @@ export const saveNotification = (tipoMsg, textoUrl, info, callbackF) => {
         .then(res => res.json())
         .then(json => {
             console.log("Se guardo la nueva notificacion: '" + json.body.mensaje + "'");
-            callbackF(info)
+            callbackF(json)
         })
         .catch(err => {
             console.log('ERROR AL GUARDAR NUEVA NOTIFICACION: ' + err.message);

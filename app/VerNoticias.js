@@ -83,13 +83,7 @@ class VerNoticias extends React.Component {
     }
 
     borrarNoticia(e) {
-        let errorField = document.getElementById("errorField")
-        errorField.innerHTML = ""
-        let div_carousel = document.getElementById('soyElCarousel')
-        let elementoActivo = div_carousel.getElementsByClassName('carousel-item active')
-        let idNoticia = elementoActivo[0].getAttribute('name')
-        let tituloNoticia = elementoActivo[0].title
-        console.log("ID Noticia: " + idNoticia)
+        alert('Hay que arreglar esto ') //Antes dependía de Bootstrap js
         var r = confirm("¿Está seguro de borrar la noticia: '" + tituloNoticia + "'")
         if (r === true) {
             APIInvoker.invokeDELETE('/icb-api/v1/noticia/' + idNoticia, response => {
