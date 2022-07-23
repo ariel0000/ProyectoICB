@@ -4,27 +4,35 @@
 }
 
 .mensaje{
-    border-radius: 5px;
-    background-color: coral;
+    max-width: 175px;
+    width: fit-content;
     color: white;
+    border-radius: 5px;
 }
 
-.mensaje-mio{
-    border-radius: 5px;
-    background-color: orangered;
-    color: white;
+.no-mio.hombre{
+    background-color: lightblue;
+}
+.mio.hombre{
+    background-color: dodgerblue;
+}
+
+.no-mio.mujer{
+    background-color: hotpink;
+}
+.mio.mujer{
+    background-color: deeppink;
 }
 
 .caja-chat{
     overflow-y: scroll;
-    max-height: 350px;
-}
-
-.caja-chat-celu{
-    overflow-y: scroll;
-    max-height: 200px;
+    max-height: 245px;
 }
 
 .cien-por-cien{
     height: 100%
+}
+
+.nombre-chat{
+    font-size: 12px;
 }

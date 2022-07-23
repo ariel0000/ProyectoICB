@@ -17,10 +17,11 @@ class Menu extends React.Component{
             noticias: false,
             mostrarMenu: false,  //Por defecto es false
             salas: false,
-            sesion: false
+            sesion: false,
+            tieneMiGDA: false //Para indicar si tiene GDA que le pertenece (Líder)
         }
     }
-
+ 
     desplegarReuniones(e){
         e.preventDefault()
         let newState = null

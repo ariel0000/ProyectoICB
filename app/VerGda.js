@@ -47,9 +47,11 @@ class VerGda extends React.Component {
             let mensaje = {
                 gda: {
                     "id": this.state.gda.id
-                }
+                },
+                mensaje: "Nueva persona en GDA de: "+this.state.gda.lider.nombre,
+                tipo: "per" //el el toolbar se recibe con el pretipo 'add' --> 'addper'
             }
-            this.props.socket.emit('addPersona', mensaje, "Nueva persona en GDA de: "+this.state.gda.lider.nombre)
+            this.props.socket.emit('addPersona', mensaje)
         },
             error => {
                 let newState = update(this.state, { error: { $set: "Error: " + error.message } })

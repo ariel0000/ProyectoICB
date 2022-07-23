@@ -44,13 +44,12 @@ class GDA extends React.Component{
         //tengo que cargar los mensajes que corresponden a este GDA. 
         // El componente CHAT se encargará de consultar esta función pasada como prop
         let newState, newMsjs
-        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=18',
+        APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+nPage+'&pageSize=10',
             response => {
                 if(this.state.mensajes != []){ //Evito hacer reverse() de un array nulo
-                    newMsjs = this.state.mensajes.reverse() //Lo doy vuelta porque dsps se vuelve 
-                    // a dar vuelta solo
+                    newMsjs = this.state.mensajes
                 }
-                newMsjs = this.state.mensajes.concat(response.body)
+                newMsjs = response.body.concat(this.state.mensajes)
                 newState = update(this.state, {mensajes: {$set: newMsjs}})
                 this.setState(newState)
             },
@@ -68,7 +67,7 @@ class GDA extends React.Component{
     consultarUltimoMensaje(mensaje){
         //En vez de consultar al API por el último mensaje, lo recibo vía Socket y lo agrego al estado
         console.log()
-        let newMensajes = this.state.mensajes.concat(mensaje).reverse()
+        let newMensajes = this.state.mensajes.concat(mensaje.mensaje)//.reverse()
         let newState = update(this.state, {mensajes: {$set: newMensajes}})  //Probablemente se gire
         this.setState(newState)
         /* APIInvoker.invokeGET('/icb-api/v1/gda/mensajes/'+this.props.params.gda+'/?pageNumber='+0+'&pageSize=1',
@@ -109,32 +108,43 @@ class GDA extends React.Component{
             }
         })
         .then(res => res.json())
-        .then(json => {
-            let newMensajes = this.state.mensajes.concat(json.body).reverse()//Siempre se da vuelta. 24
-            let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
-            this.setState(newState) //Cambia el orden de los mensajes
-            callbackF(json.body, 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre) 
-            //el callback incluye el mensaje tal cual es guardado en la BdD
-        })
+        .then((json) => {
+            if(json.ok){
+                let newMensajes = this.state.mensajes.concat(json.body)
+                let newState = update(this.state, {mensajes: {$set: newMensajes}}) //[0, 0, json.body]
+                this.setState(newState) //Cambia el orden de los mensajes
+                let idChat = 'gda'+this.state.GDA.id
+                let mensaje = {
+                    notificacion: 'Nuevo mensaje en GDA de: '+this.state.GDA.lider.nombre, //
+                    mensaje: json.body,
+                    persona: json.body.persona, //La persona que envió el mensaje
+                    tipo: 'gda'+json.body.gda.id
+                }
+                callbackF(mensaje, idChat);
+                //el callback incluye el mensaje tal cual es guardado en la BdD
+            }
+            else if(json.status == 401){
+                window.localStorage.removeItem("token")
+                window.localStorage.removeItem("codigo")
+                window.location = ('/')
+            }
+            })
         .catch(err => {
             console.log('ERROR AL GUARDAR NUEVO MENSAJE: '+err.message)
         })
     }
 
-/*    addMsg(mensaje){
-        let respuesta = this.agregarMensaje(mensaje) //Retorno un Promise (una Promesa)
-        console.log('typeOff: '+typeof(respuesta))
-        respuesta
-            .then(msgsRta => {
-                let newState = update(this.state, {mensajes: {$splice: [[0, 0, msgsRta]]}})
-                this.setState(newState) 
-            })
-            .catch(err => {
-                console.log('Error: '+err)
-            })
-    }*/
-
     render() {
+        const gdaHombres = () => {
+            if(this.state.GDA.sexo == 'Masculino'){
+                return "hombre"
+            }
+            return "mujer"
+        }
+        let sexo = "hombre"
+        if(this.state.GDA != null){
+            sexo = gdaHombres()
+        }
         return(
             <div className="infoApp cien-por-cien">
                 <blockquote className="text-center mb-1 pb-1 mt-0">
@@ -148,7 +158,8 @@ class GDA extends React.Component{
                                 getMensajes={this.consultarMensajes.bind(this)} 
                                 mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
                                 lastMsj={this.consultarUltimoMensaje.bind(this)} 
-                                socket= {this.props.socket} pathname={this.props.location.pathname} />
+                                socket= {this.props.socket} pathname={this.props.location.pathname}
+                                sexo={sexo} />
                         </div>
                     </div>
                 </div>

@@ -3,3 +3,27 @@
     max-width: 200px;
     max-height: 150px;
 }
+
+.noticia {
+    border-radius: 5%;
+}
+
+.noticia-enter{
+    opacity: 0.01
+}
+
+.noticia-enter.noticia-enter-active{
+    opacity: 1;
+    transition: opacity 500ms ease-in;
+}
+
+.noticia-exit{
+    opacity: 1;
+    display: none;
+}
+
+.noticia-exit.noticia-exit-active{
+    opacity: 0;
+    transition: opacity 500ms ease in;
+
+}

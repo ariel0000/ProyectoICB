@@ -16,8 +16,13 @@ class IcbApp extends React.Component {
     }
 
     componentDidMount(){
-        socket.connect()
-        
+        socket.connect() //Inicializo el socket - 
+        socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
+            console.log('Failed to connect to server');
+            window.location = ('/')
+        });
+        // todo el resto de componentes se encargarán de registrar sus propios eventos.
+      
         // Aquí hay que comprobar el login (token y codigo, Con la ayuda de algún servicio del API)
         //Si es valida la sesión --> se tiene que configurar el estado con los datos que necesitaremos de la persona
         // Por el contrario, el 'profile: null' será suficiente para que Menú sepa que no se ha inicia sesión
@@ -33,12 +38,17 @@ class IcbApp extends React.Component {
                 window.localStorage.setItem("token", response.body.token) //El nuevo token
                 window.localStorage.setItem("codigo", response.body.codigo)
                 APIInvoker.invokeGET('/icb-api/v1/usuario/'+codigo, response => {  //APIInvooker anidado :O
-                    this.setState(update(this.state, { profile: { $set: response.body } }))
+                    let estado = response.body
+                    let fechaVioNotif = new Date(response.body.sesion.vio_notificacion)
+                    let fechaUltimaVezOnline = new Date(response.body.sesion.ultima_vez_online)
+                    estado.sesion.vio_notificacion = new Date(fechaVioNotif.getTime()) //Hora de Argentina
+                    estado.sesion.ultima_vez_online = new Date(fechaUltimaVezOnline.getTime())
+                    this.setState(update(this.state, { profile: { $set: estado } }))
                     browserHistory.push('/MainApp/bienvenido')
                 },
                 error => {
                     alert("Error al consultar usuario"+error.message);  //Error al consultar "obtenerDatosPorCódigo"
-                })  
+                })
             },
             error => {  //Cuando el token es inválido
                 window.localStorage.removeItem("token")
@@ -46,6 +56,12 @@ class IcbApp extends React.Component {
                 window.location = ('/')
             })
         }
+    }
+
+    actualizarEstado(target, valor){
+        // Función pasada como prop para que permita actualizar el estado (profile) y renderizar los componentes
+        let newState = update(this.state, {profile: {[target]: {$set: valor}}})
+        this.setState(newState)
     }
 
     render() {
@@ -60,13 +76,13 @@ class IcbApp extends React.Component {
             <div className="container-fluid px-2 div-principal">
                 {this.state.profile != null?
                     <Toolbar perfil={this.state.profile} socket={socket} pathname={this.props.location.pathname}
-                    params={this.props.location.pathname} />
+                    actualizarEstado={this.actualizarEstado.bind(this)} />
                 :
                     <Toolbar />
                 }
                 <div className="row gx-0">  {/* En la misma 'row' tengo al Menú y al MainApp */}
                 {this.state.profile != null?
-                    <Menu esCelu={esCelu} perfil={this.state.profile} />
+                    <Menu esCelu={esCelu} perfil={this.state.profile} socket={socket} />
                     :
                     <Menu esCelu={esCelu} />
                 }

@@ -8,7 +8,7 @@ class VerGDAs extends React.Component {
         super(props)
         this.state = {
             gdas: [],
-            gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado' como  ya que siempre se pasa a null
+            gdaSeleccionado: null, //Esto no me permitió cargar el 'gdaSeleccionado'  ya que siempre se pasa a null
                                  // al momento de redirigir
             paraUsuario: false,  //Por defecto este componente es accedido por algún lider para ver todos los gdas
             //Si paraUsuario es true --> Cargará los gdas del usuario para luego acceder a cada uno de ellos
@@ -64,7 +64,6 @@ class VerGDAs extends React.Component {
             this.setState(newState)
         }
         console.log('click outside')
-        
     }
 
     handleClickGDA(e) {
@@ -178,7 +177,7 @@ class VerGDAs extends React.Component {
                            </Choose>
                         </blockquote>
                         <blockquote className="text-center">
-                            <h6 className="text-white" id="errorField"></h6>
+                            <h6 className="bg-danger rounded-2" id="errorField"></h6>
                         </blockquote>
                         <div className="row justify-content-center m-1" >
                             <For each="gda" index="index" of={gdas} >
@@ -197,7 +196,7 @@ class VerGDAs extends React.Component {
                                                                     {gda.dia} <br />
                                                                     {gda.horario}
                                                                 </div>
-                                                                <div className="warning text-red p-0 mt-0">
+                                                                <div className="warning text-wrap text-red p-0 mt-0">
                                                                     {gda.edad}
                                                                 </div>
                                                             </div>

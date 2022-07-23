@@ -1,6 +1,7 @@
 import React from 'react'
 import update from 'react-addons-update'
 import WindowFocusHandler from './WindowsFocusHandler';
+import Mensaje from './Mensaje'
 
 // function Chat({nombre, id, pathname}) {  //Estos atributos son pasados como props 
 class Chat extends React.Component {
@@ -9,7 +10,8 @@ class Chat extends React.Component {
         this.state = {
             mensajes: [],
             mensaje: "",
-            pagina: 0
+            pagina: 0,
+            firstTime: true
         }
     }
 
@@ -26,33 +28,31 @@ class Chat extends React.Component {
             //Este mensaje solo lo reciben los clientes compañeros de alguien que mando un mensaje
             this.consultarUltimoMensaje(mensaje)
         })
+    }
 
-        this.props.socket.on('connect_error', function() {  //Nunca pasó pero también debería recargar
-            console.log('Failed to connect to server');
-            window.location = ('/')
-        });
-        /*
-        this.props.socket.on('disconnect', () => {
-            // el auto connect esta deshabilitado
-           // this.props.socket.connect(); No puedo hacer esto porque no me reconecto a las rooms necesarias
-            window.location = ('/') //Solo desde la recarga completa puedo volver a conectar correctamente a las rooms
-        })*/
+    
+    componentDidUpdate(prevsProps, prevState, snapshot){
+        //Utilizo esto solo para asegurarme que se scrolleo hasta el final
+        if(this.state.firstTime){ //Entro la primera vez que renderizo. firstTime se actualiza en el scroll a false
+            this.scrollearHastaUltimoElemento()
+        }
     }
 
     componentWillUnmount(){
     //    console.log('Server desconectado') 
        // this.props.socket.disconnect()  //Hace que se ejecute el listener del 'disconnect' que redirige a '/'
        this.props.socket.off('mensajes')
+       this.props.socket.off('msgBroadcast')
     }
 
-    msgToAnother(mensaje, detalle){
+    msgToAnother(mensaje, idChat){
         //Funcion pasada como callBack en el siguiente método. Envía el msg Broadcast dsps de que se guardo
-        this.props.socket.emit('msgToAnother', mensaje, detalle, this.props.id)
+        this.props.socket.emit('msgToAnother', mensaje, idChat)
+       // this.props.socket.emit('msjNotificacion', mensaje, idChat)
     }
 
     agregarMensaje(mensaje){
         //Metodo que solo se ejecuta cuando soy yo quíen mando el mensaje
-        //Usar sync y await para que la segunda función espere a la primera
         this.props.addMsg(mensaje, this.msgToAnother.bind(this))
     }
 
@@ -73,11 +73,11 @@ class Chat extends React.Component {
         if(this.state.mensaje == ''){
             return
         }
-        let newState = update(this.state, {mensaje: {$set: ''}})
+        let newState = update(this.state, {mensaje: {$set: ''}, firstTime: {$set: true}})
         this.props.socket.emit('mensaje', this.props.idpersona, this.state.mensaje, [this.props.id]) //id del chat
-        this.setState(newState)
+        this.setState(newState, this.scrollearHastaUltimoElemento()) //
     }
-
+    /*
     static getDerivedStateFromProps(props, state){
         if(state.mensajes != props.mensajes){
             return {
@@ -86,29 +86,21 @@ class Chat extends React.Component {
             }
         }
         return null
-    }
-
-    componentDidUpdate(prevsProps, prevState, snapshot){
-        //Utilizo esto solo para asegurarme que se scrolleo hasta el final
-
-        if(this.state.pagina == 0){
-            //Solo si la página es 0 scrolleo hasta el último elemento
-            this.scrollearHastaUltimoElemento();
-        }
-    }
-
+    }  */
+ 
     scrollearHastaUltimoElemento(){
         //Se encarga de correr el chat hasta el último elemento
         document.getElementById('caja-chat').scrollIntoView();
     }
 
     onScroll(e){
-        //Tengo que averiguar si el scroll llegó al tope para traer nuevos mensajes
+        //Tengo que averiguar si el scroll llegó al tope para traer nuevos mensajes.
+        //Además actualizo en valor firstTime
         let distanciaAlTope = e.target.scrollTop
-        if(distanciaAlTope <= 5){
+        if(distanciaAlTope <= 10){
             this.props.getMensajes(this.state.pagina+1);
-            e.target.scrollTop = 1000
-            let newState = update(this.state, {pagina: {$set: this.state.pagina+1}})
+            e.target.scrollTop = 300
+            let newState = update(this.state, {pagina: {$set: this.state.pagina+1}, firstTime: {$set: false}})
             this.setState(newState)
         }
     }
@@ -130,23 +122,21 @@ class Chat extends React.Component {
            // socket.disconnect() Esto rompe todo, entender que a veces la pantalla se ve pero esta onBlur (PC)
         }
 
-        let mensajes = this.state.mensajes
+        let mensajes = this.props.mensajes
         return (
             <div className="infoApp container-fluid" id='ChatComponent'>
                 <div className="row mt-1" >
                     <div  className={this.props.esCelu? "col-12 bg-info p-2 caja-chat-celu": "col-12 bg-info p-2 caja-chat"} 
                         onScroll={this.onScroll.bind(this)} >
+                        <br/>
+                        <br/>
+                        <br/>
                         {mensajes.map((e, i) => 
                         <div key={i} className={(this.props.idpersona == e.persona.id)? 
-                        'd-flex justify-content-end': 'd-flex justify-content-start' }>
-                            <div style={(this.props.idpersona == e.persona.id)? 
-                            {textAlign: 'end'}: {textAlign: 'start'}} 
-                            className={(this.props.idpersona == e.persona.id)?
-                            "mensaje-mio p-1 mb-1": "mensaje p-1 mb-1"} >
-                                <span className='nombreChat'>{e.persona.nombre+' '+e.persona.apellido}</span>
-                            <br />
-                                {e.mensaje}
-                            </div>
+                        'd-flex flex-column ms-auto mensaje mio p-1 mb-1 '+this.props.sexo+'': 
+                            'd-flex flex-column me-auto mensaje no-mio p-1 mb-1 '+this.props.sexo+'' }>
+                            <div className='text-nowrap nombre-chat'>{e.persona.nombre} {e.persona.apellido}</div>
+                            <Mensaje mensaje={e.mensaje} />
                         </div>)} 
                         <div id='caja-chat'></div>{/* Uso este div para scrollear automáticamente*/}
                     </div>
@@ -155,7 +145,7 @@ class Chat extends React.Component {
                            {/* <label className="form-label">Mensajes del servidor</label> */ }
                             <textarea id="mensaje" rows="1" cols="1" className="form-control"
                                 value={this.state.mensaje} onChange={this.setMensaje.bind(this)} />
-                                <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
+                            <button type="submit" id="enviar" className="btn btn-primary mt-2">Enviar</button>
                         </div>
                     </form>
                     <WindowFocusHandler beginFocus={this.ifDisconnected.bind(this)} beginBlur={onBlur.bind(this)} />
