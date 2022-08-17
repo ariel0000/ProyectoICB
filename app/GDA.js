@@ -1,7 +1,8 @@
 import React from 'react'
 import Chat from './Chat'
 import APIInvoker from './utils/APIInvoker'
-import update from 'react-addons-update'   
+import update from 'react-addons-update'
+import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'   
 
 class GDA extends React.Component{
     constructor(props){
@@ -9,7 +10,10 @@ class GDA extends React.Component{
         this.state = {
             idGda: this.props.params.gda,
             GDA: null,
-            mensajes:[]
+            mensajes:[],
+            indiceComponente: 1,
+            mapaDeComponentes: new Map([[1, Chat], [2, 'Componente Para ver Participantes'],
+                                        [3, '¿Componente para editar?']])
         }
     }
 
@@ -134,6 +138,21 @@ class GDA extends React.Component{
         })
     }
 
+    siguienteComponente(){
+        //función que aumenta el índice del estado para pasar al siguiente componente
+        //Es llamada como prop desde Chat
+        let size = this.state.mapaDeComponentes.size()
+        let newState = () => {
+            if(this.state.indiceComponente == size){ //Tengo que volver al componente uno
+                return 1
+            }
+            else{
+                return size+1
+            }
+        }
+        this.setState(newState);
+    }
+
     render() {
         const gdaHombres = () => {
             if(this.state.GDA.sexo == 'Masculino'){
@@ -147,9 +166,15 @@ class GDA extends React.Component{
         }
         return(
             <div className="infoApp cien-por-cien">
-                <blockquote className="text-center mb-1 pb-1 mt-0">
-                    <h6 className="text-white bg-danger rounded">Chat del GDA</h6>
-                </blockquote>
+                <div className='d-block pt-1'>
+                    <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}} >
+                        <FaArrowLeft />
+                    </button>
+                    <h6 className="text-white bg-danger rounded d-inline m-2 p-1">Chat del GDA</h6>
+                    <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}}>
+                        <FaArrowRight />
+                    </button>
+                </div>
                 <div className="container-fluid">
                     <div className="row justify-content-center align-items-center mt-1">
                         <div className="col-sm-9 col-xs-12 gx-2">
