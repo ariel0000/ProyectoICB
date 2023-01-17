@@ -6,6 +6,8 @@ import { BsCalendar } from 'react-icons/bs'
 import { RiLockPasswordLine } from 'react-icons/ri'
 import { browserHistory } from 'react-router'
 import { MdEmail } from 'react-icons/md'
+import { IoManSharp, IoWomanSharp } from "react-icons/io5";
+import { FaRestroom } from "react-icons/fa"
 
 class Signup extends React.Component {
 
@@ -19,7 +21,8 @@ class Signup extends React.Component {
             fecha_nacimiento: "",
             bautismo: false,
             password: "",
-            codigo: ""
+            codigo: "",
+            sexo: ""
             // userOk: false,
             // license: false
         }
@@ -34,6 +37,7 @@ class Signup extends React.Component {
                 "fecha_nacimiento": this.state.fecha_nacimiento,
                 "bautismo": this.state.bautismo,
                 "direccion": "",
+                "sexo": this.state.sexo,
 
                 "rol": {  //Rol por defecto -- Sería rol de usuario
                     "id": "1"  //Si no proporciono el id le estoy diciendo al api que cree un nuevo rol. En camio el rol id 1 ya existe.
@@ -108,16 +112,22 @@ class Signup extends React.Component {
 
     handleChange(e) {
         //Solo se limita a actualizar el "value" del input con el valor y acomodar los classname
-        let field = e.target.name
-        let value = e.target.value
-        let type = e.target.type
+        if(e.target.name){
 
-        if (type === 'checkbox') {  //Actualiza el estado de bautismo
-            this.setState(update(this.state, { [field]: { $set: e.target.checked } }))
-        }
-        else {       //Actualiza el estado de Nombre, fecha, email y password
-            this.setState(update(this.state, { [field]: { $set: value } }))
-            e.target.className = "form-control"  //Cualquier input que se acomoda se le va el "is-invalid" o el "is-valid"
+            let field = e.target.name
+            let value = e.target.value
+            let type = e.target.type
+            console.log("Campos: "+field+' '+value+' '+type);
+
+            if (type === 'checkbox') {  //Actualiza el estado de bautismo
+                this.setState(update(this.state, { [field]: { $set: e.target.checked } }))
+            }
+            else {       //Actualiza el estado de Nombre, fecha, email, password y sexo
+                this.setState(update(this.state, { [field]: { $set: value } }))
+                if(field != "sexo"){ // No se debe modificar el button para elegir el sexo
+                    e.target.className = "form-control"  //Cualquier input que se acomoda se le va el "is-invalid" o el "is-valid"
+                }
+            }
         }
     }
 
@@ -177,7 +187,7 @@ class Signup extends React.Component {
             else {
                 e.target.className = "form-control is-invalid"
                 document.getElementById("errorField").innerText = "La contraseña debe ser de al menos 6 dígitos, con una combinación de letras y números"
-                document.getElementById("errorField").className = "error"
+                document.getElementById("errorField").className = "error text-white bg-danger rounded"
             }
         }
     }
@@ -192,6 +202,7 @@ class Signup extends React.Component {
     render() {
         let handleClickRegistro = this.handleClickRegistro
         let Blur = this.handleBlur
+        let sexo = this.state.sexo == "" ? false: true
         return (
             <div className="container-fluid mt-3">
                 <div className="row justify-content-md-center justify-content-start mb-2">
@@ -246,6 +257,37 @@ class Signup extends React.Component {
                         <input id="fecha_nac" name="fecha_nacimiento" type="date" className="form-control"
                             value={this.state.fecha_nac} onChange={this.handleChange.bind(this)} />
                     </div>
+                </div>
+                <div className="row justify-content-md-center justify-content-start align-items-end mb-2 ">
+                    <div className="col-md-1 col-auto gx-2">
+                        <span className="btn btn-info text-white fs-5"><FaRestroom /></span>
+                    </div>
+                    <Choose>
+                        <When condition={sexo}>
+                        <div className="col-md-6 col-10 gx-1 ">
+                    
+                            <button className={this.state.sexo == 'masculino'? "btn btn-danger w-25 text-white fs-5 p-1 me-2" : 
+                            "btn btn-secondary w-25 text-white p-1 me-2"} name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
+                                <IoManSharp />
+                            </button>
+                            <button className={this.state.sexo == 'femenino'? "btn btn-danger w-25 text-white fs-5 p-1 me-2" : 
+                            "btn btn-secondary w-25 text-white p-1 me-2"} name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
+                                <IoWomanSharp  />
+                            </button>
+                    
+                        </div>
+                        </When>
+                        <Otherwise>
+                        <div className="col-md-6 col-10 gx-1 ">
+                            <button className="btn btn-secondary w-25 text-white fs-5 p-2 me-2" name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
+                                <IoManSharp />
+                            </button>
+                            <button className="btn btn-secondary w-25 text-white fs-5 p-2 me-2" name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
+                                <IoWomanSharp />
+                            </button>
+                        </div>
+                        </Otherwise> 
+                    </Choose>
                 </div>
                 <div className="row justify-content-md-center justify-content-start align-items-center mb-0">
                     <div className="col-md-1 col-auto gx-2">
