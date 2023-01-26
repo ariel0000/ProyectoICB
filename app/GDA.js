@@ -1,7 +1,10 @@
 import React from 'react'
 import Chat from './Chat'
 import APIInvoker from './utils/APIInvoker'
-import update from 'react-addons-update'   
+import update from 'react-addons-update'
+import { FaArrowRight, FaArrowLeft } from 'react-icons/fa'   
+import { browserHistory } from 'react-router'
+import Participantes from './Participantes'
 
 class GDA extends React.Component{
     constructor(props){
@@ -9,7 +12,10 @@ class GDA extends React.Component{
         this.state = {
             idGda: this.props.params.gda,
             GDA: null,
-            mensajes:[]
+            mensajes:[],
+            indiceComponente: 0,
+            mapaDeComponentes: new Map([[0, '/MainApp/verGDAsEdit/'+this.props.params.gda+'/participantes'], 
+                                        [1, '/MainApp/verGDAsEdit/'+this.props.params.gda+'/participantes']])
         }
     }
 
@@ -134,7 +140,29 @@ class GDA extends React.Component{
         })
     }
 
+    irAUrl(){
+        browserHistory.push(this.state.mapaDeComponentes.get(this.state.indiceComponente))
+        console.log("URL: "+this.state.mapaDeComponentes.get(this.state.indiceComponente))
+    }
+
+    siguienteComponente(e){
+        //Avanzo al siguiente componente del map definido en state
+        e.preventDefault()
+        const size = this.state.mapaDeComponentes.size;
+        let indice = this.state.indiceComponente;
+        let newState;
+        if(this.state.indiceComponente >= size){ //Debo volver al indice 0
+            newState = update(this.state, {indiceComponente: 0})
+        }
+        else{
+            newState = update(this.state, {indiceComponente: {$set: ++indice}})
+        }
+        // this.irAUrl()
+        this.setState(newState)
+    }
+
     render() {
+        const indice = this.state.indiceComponente;
         const gdaHombres = () => {
             if(this.state.GDA.sexo == 'Masculino'){
                 return "hombre"
@@ -147,22 +175,34 @@ class GDA extends React.Component{
         }
         return(
             <div className="infoApp cien-por-cien">
-                <blockquote className="text-center mb-1 pb-1 mt-0">
-                    <h6 className="text-white bg-danger rounded">Chat del GDA</h6>
-                </blockquote>
+                <div className='d-block pt-1'>
+                    <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}} >
+                        <FaArrowLeft />
+                    </button>
+                    <h6 className="text-white bg-danger rounded d-inline m-2 p-1">Chat del GDA</h6>
+                    <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}}>
+                        <FaArrowRight onClick={this.siguienteComponente.bind(this)}/>
+                    </button>
+                </div>
+                {indice == 0?
                 <div className="container-fluid">
                     <div className="row justify-content-center align-items-center mt-1">
                         <div className="col-sm-9 col-xs-12 gx-2">
                             <Chat idpersona={this.props.profile.id} 
-                                id={"gda"+this.props.params.gda} reload={this.reload.bind(this)}
-                                getMensajes={this.consultarMensajes.bind(this)} 
-                                mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
-                                lastMsj={this.consultarUltimoMensaje.bind(this)} 
-                                socket= {this.props.socket} pathname={this.props.location.pathname}
-                                sexo={sexo} />
+                            id={"gda"+this.props.params.gda} reload={this.reload.bind(this)}
+                            getMensajes={this.consultarMensajes.bind(this)} 
+                            mensajes={this.state.mensajes} addMsg={this.agregarMensaje.bind(this)} 
+                            lastMsj={this.consultarUltimoMensaje.bind(this)} 
+                            socket= {this.props.socket} pathname={this.props.location.pathname}
+                            sexo={sexo} />
                         </div>
                     </div>
                 </div>
+                :
+                <div className='container-fluid'>
+                        <Participantes GDA={this.state.GDA} participantes={this.state.GDA.participantes} />
+                </div>
+                }
             </div>
         )
     }
