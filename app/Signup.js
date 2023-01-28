@@ -66,6 +66,8 @@ class Signup extends React.Component {
         let campo_nombre = document.getElementById("fname")
         let campo_email = document.getElementById("fmail")
         let campo_apellido = document.getElementById("fsurname")
+        let button_masculino_class = document.getElementById("smasculino").className
+        let button_femenino_class = document.getElementById("sfemenino").className
 
         if (campo_fecha.value === "") {  //Es el único campo que se pone inválido solo desde acá
             document.getElementById("fecha_nac").className = "form-control is-invalid"
@@ -79,6 +81,10 @@ class Signup extends React.Component {
         if(campo_apellido === ""){
             document.getElementById("fsurname").className = "form-control is-invalid"
         }
+        if(this.state.sexo == ""){
+            document.getElementById('smasculino').className = button_masculino_class + " form-control is-invalid"
+            document.getElementById('sfemenino').className = button_femenino_class + " form-control is-invalid"
+        }
     }
 
     handleClickRegistro(e) {
@@ -90,7 +96,7 @@ class Signup extends React.Component {
         let campo_apellido = document.getElementById("fsurname")
         
         if(campo_nombre.className.includes("is-invalid") || campo_email.className.includes("is-invalid") || campo_fecha.value == ""
-            || campo_nombre.value == "" || campo_email.value == "" || campo_apellido.className.includes("is-invalid")) {
+            || campo_nombre.value == "" || campo_email.value == "" || campo_apellido.className.includes("is-invalid") || this.state.sexo == "") {
             //Aviso en algún lado del html que verifique los datos
             alert("Error en los datos, verifique las casillas marcadas")
             this.marcarCasillasIncorrectas()
@@ -143,7 +149,7 @@ class Signup extends React.Component {
                 document.getElementById("fsurname").className = "form-control is-valid"
            
         }, error => {
-            document.getElementById("errorField").innerText = error.message  //error sería el "response"
+            this.invalidarErrorMessage(error.message)
             target.className = "form-control is-invalid"
             document.getElementById("fsurname").className = "form-control is-invalid"
             console.log("Respuesta: "+error.ok)
@@ -157,9 +163,10 @@ class Signup extends React.Component {
         if (field === 'nombre') {  //Verificar si el nombre está disponible
             if (value === "") {
                 e.target.className = "form-control is-invalid"
+                
             }
             else{
-                e.target.className = "form-control is-valid"
+                this.nombreDisponible(document.getElementById("fname"))
             }
         }
         else if (field === "mail") {
@@ -169,6 +176,7 @@ class Signup extends React.Component {
             }
             else {
                 e.target.className = "form-control is-invalid"
+                this.invalidarErrorMessage("el mail no es válido")
             }
         }
         else if (field === "apellido"){
@@ -186,8 +194,7 @@ class Signup extends React.Component {
             }
             else {
                 e.target.className = "form-control is-invalid"
-                document.getElementById("errorField").innerText = "La contraseña debe ser de al menos 6 dígitos, con una combinación de letras y números"
-                document.getElementById("errorField").className = "error text-white bg-danger rounded"
+                this.invalidarErrorMessage("La contraseña debe ser de al menos 6 dígitos, con una combinación de letras y números")
             }
         }
     }
@@ -197,6 +204,12 @@ class Signup extends React.Component {
         let field = e.target.name  //Por ahora no necesito esto
 
         document.getElementById('errorField').innerText = ""
+    }
+
+    // Cambia el estado del bloque de mensaje de normal a error
+    invalidarErrorMessage(mensaje){
+        document.getElementById("errorField").innerText = mensaje
+        document.getElementById("errorField").className = 'shake animated bg-danger text-white'
     }
 
     render() {
@@ -259,19 +272,19 @@ class Signup extends React.Component {
                     </div>
                 </div>
                 <div className="row justify-content-md-center justify-content-start align-items-end mb-2 ">
-                    <div className="col-md-1 col-auto gx-2">
+                    <div id="fsexo" className="col-md-1 col-auto gx-2">
                         <span className="btn btn-info text-white fs-5"><FaRestroom /></span>
                     </div>
                     <Choose>
                         <When condition={sexo}>
-                        <div className="col-md-6 col-10 gx-1 ">
+                        <div className="col-md-6 col-10 gx-4 mt-1">
                     
-                            <button className={this.state.sexo == 'masculino'? "btn btn-danger w-25 text-white fs-5 p-1 me-2" : 
-                            "btn btn-secondary w-25 text-white p-1 me-2"} name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
+                            <button id='smasculino' className={this.state.sexo == 'masculino'? "btn btn-info w-25 text-white fs-5 p-2 me-2" : 
+                            "btn btn-info w-25 text-white p-2 me-2"} name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
                                 <IoManSharp />
                             </button>
-                            <button className={this.state.sexo == 'femenino'? "btn btn-danger w-25 text-white fs-5 p-1 me-2" : 
-                            "btn btn-secondary w-25 text-white p-1 me-2"} name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
+                            <button id='sfemenino' className={this.state.sexo == 'femenino'? "btn btn-info w-25 text-white fs-5 p-2 me-2" : 
+                            "btn btn-info w-25 text-white p-2 me-2"} name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
                                 <IoWomanSharp  />
                             </button>
                     
@@ -279,10 +292,10 @@ class Signup extends React.Component {
                         </When>
                         <Otherwise>
                         <div className="col-md-6 col-10 gx-1 ">
-                            <button className="btn btn-secondary w-25 text-white fs-5 p-2 me-2" name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
+                            <button id='smasculino' className="btn btn-info w-25 text-white fs-5 p-2 me-2" name="sexo" value='masculino' onClick={this.handleChange.bind(this)}>
                                 <IoManSharp />
                             </button>
-                            <button className="btn btn-secondary w-25 text-white fs-5 p-2 me-2" name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
+                            <button id='sfemenino' className="btn btn-info w-25 text-white fs-5 p-2 me-2" name="sexo" value='femenino' onClick={this.handleChange.bind(this)}>
                                 <IoWomanSharp />
                             </button>
                         </div>
