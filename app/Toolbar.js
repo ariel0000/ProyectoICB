@@ -108,12 +108,12 @@ class Toolbar extends React.Component {
 
     agregarMsjNotificacion(mensaje){
         //Agrego como notificacion el mensaje al estado y la muestro (Función general para Msj)
-        console.log("LLego la llamada de msg_notificacion")
         let textoUrl = this.state.mapaDeUrls.get(mensaje.tipo.replace(/[^a-z]/gi, '')); //Quito el/los n° del mensaje.tipo
         //Obtengo el url de la notificación por medio del mapa que esta en state
         let id = mensaje.tipo.replace(/\D/g, "");  //obtengo el id que se adjunta al url
-       
+        
         if(mensaje.persona.id != this.props.perfil.id){
+            this.mostrarNotificacion(mensaje.notificacion);
             this.agregarNotificacion('msj',textoUrl+id, mensaje) //Agrego la notificación porque soy receptor
         }
         else{ //Soy el emisor de la notificación
