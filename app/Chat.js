@@ -56,24 +56,6 @@ class Chat extends React.Component {
         this.props.addMsg(mensaje, this.msgToAnother.bind(this))
     }
 
-    actualizarVioNotificacion(){
-        APIInvoker.invokePUT('/icb-api/v1/sesion/vio_notificacion/'+this.props.idpersona, null, response => {
-            //Por medio de un Provider del Context tendría que actualizar la sesion pasada como prop
-            let fechaVioNotif = new Date(response.body.vio_notificacion)
-            let estado = response.body //sería una sesionDTO la que devuelve
-            estado.vio_notificacion = new Date(fechaVioNotif.getTime())
-            // No es necesario llamar (imposible desde aca) al método encargado de actualizar el último momento de la sesión
-        },
-        error=> {
-           // document.getElementById("errorField").innerText = "Error: "+error.message
-            if(error.status == 401){
-                alert("Debe iniciar sesión para realizar estas operaciones")
-                window.location = ('/')
-            }
-            //document.getElementById("errorField").innerText = "Error: "+error.message
-        })
-    }
-
     consultarUltimoMensaje(mensaje){
         //Desde acá consulto los props para recuperar el último mensaje recibido
         this.props.lastMsj(mensaje)

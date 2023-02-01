@@ -25,9 +25,9 @@ module.exports = {
         io.to(idChat).emit('mensajes', { idper, mensaje });
       });
       socket.on('msgToAnother', (mensaje, idChat) => {
-        socket.to(idChat).emit('msgBroadcast', mensaje);
+        socket.broadcast.to(idChat).emit('msgBroadcast', mensaje);
         console.log("Id Chat actual: "+idChat)
-        io.to(idChat).emit('msj_notificacion', mensaje); //el id personal reemplaza a idChat
+        socket.to(idChat).emit('msj_notificacion', mensaje); //el id personal reemplaza a idChat
         //   metodosAPI.guardarNotificacion(mensaje, info);
       });
       socket.on('addPersona', (mensaje) => {
