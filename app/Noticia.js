@@ -1,23 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 
-class Noticia extends React.Component{
-    constructor(props){
-        super(props)
-    }
+    const Noticia = (props) => {
+        const [publicacion, setPublicacion] = useState(null)
 
-    componentDidMount(){
+        useEffect(() => {
+            setPublicacion(props.noticia)
+        }, [props.noticia])
 
-    }
-
-    render(){
-        return(
-            <div className='noticia'>
-                <h4>{this.props.noticia.titulo}</h4>
-                <h6 className="mt-1">{this.props.noticia.subtitulo}</h6>
-                <img src={this.props.noticia.url_imagen} className="d-block w-100 mt-1 mb-2 loading" />
-                <h6 className="mt-1">{this.props.noticia.pie_de_pagina}</h6>
-            </div>
-        )
-    }
-
-} export default Noticia
+ 
+    return(
+        <div className='noticia'>
+            <If condition={publicacion!= null}>
+                <h4>{publicacion.titulo}</h4>
+                <h6 className="mt-1">{publicacion.subtitulo}</h6>
+                <img src={publicacion.url_imagen} className="d-block w-100 mt-1 mb-2 loading" />
+                <h6 className="mt-1">{publicacion.pie_de_pagina}</h6>
+            </If>
+        </div>
+    )
+}
+ export default Noticia;

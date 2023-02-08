@@ -20,6 +20,7 @@ import Modal from './Modal'
 import GDA from './GDA'
 import CrearNoticia from './CrearNoticia'
 import VerNoticias from './VerNoticias'
+import Evento from './Evento'
 
 var createBrowserHistory = require("history").createBrowserHistory
 
@@ -49,6 +50,9 @@ render((
                     <Route path=":gda" component={GDA} tab="MiGDA" />
                 </Route>
                 <Route path="signup" component={Signup} />
+                <Route path="eventos" component={VerGDAs} tab="verEventos" >
+                    <Route path=":evento" component={Evento} tab="Evento" />
+                </Route>
                 <Route path="login" component={Login} />
                 <Route path="*" component={Error404} />
             </Route>

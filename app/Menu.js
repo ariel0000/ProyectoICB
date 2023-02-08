@@ -252,7 +252,9 @@ class Menu extends React.Component{
                     <li className={this.state.mostrarMenu ? "" : "pato"}>
                         <a className="nav-link" href="#" aria-disabled="true" onClick={this.desplegarSalas.bind(this)}>Eventos</a>
                         <Submenu item="Ver Eventos" active={this.state.salas} cerrarMenu={this.cerrarMenu.bind(this)} 
-                        enlace="/MainApp/misSalas" />
+                        enlace="/MainApp/enventos" />
+                        <Submenu item="Ejemplo Evento" active={this.state.salas} cerrarMenu={this.cerrarMenu.bind(this)} 
+                        enlace="/MainApp/eventos/1" />
                     {(rol > 1)?
                         <Submenu item="Crear Evento" active={this.state.salas} cerrarMenu={this.cerrarMenu.bind(this)} 
                         enlace="/MainApp/infoSalas" />
