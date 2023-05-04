@@ -51,12 +51,17 @@ class VerNoticias extends React.Component {
     }
 
     VolverAnteriorNoticia(e){
-        //Debe hacer exactamente lo contrario de la anterior función
-        /* 
-        **
-        ***
-        **
-        */
+        console.log("Estoy en la funcion del interval")
+        let newState
+        let indiceActual = this.state.indiceNoticia
+        if(indiceActual > 0){
+            newState = update(this.state, {indiceNoticia: {$set: indiceActual-1}})
+            console.log('Retocedo noticia')
+        }
+        else{
+            newState = update(this.state, {indiceNoticia: {$set: this.state.noticias.length-1}}) //Empiezo otra vez
+        }
+        this.setState(newState)
     }
 
     componentDidMount() {
@@ -121,7 +126,7 @@ class VerNoticias extends React.Component {
                             <FaArrowLeft />
                         </button>
                     </div>
-                    <div className="col-8 col-md-6 p-1">
+                    <div className="col-8 col-md-6 p-2">
                         <TransitionGroup>      
                                 {noticias[this.state.indiceNoticia]}
                         </TransitionGroup>
