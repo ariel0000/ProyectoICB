@@ -1,5 +1,4 @@
 import React from "react";
-import update from 'react-addons-update';
 import Participante from './Participante'
 
 class Participantes extends React.Component{

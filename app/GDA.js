@@ -176,13 +176,16 @@ class GDA extends React.Component{
         return(
             <div className="infoApp cien-por-cien">
                 <div className='d-block pt-1'>
-                    <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}} >
+                    {/* <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}} >
                         <FaArrowLeft />
-                    </button>
-                    <h6 className="text-white bg-danger rounded d-inline m-2 p-1">Chat del GDA</h6>
+                    </button> */}
                     <button className="btn btn-dark text-info d-inline p-1" style={{opacity: "75%"}}>
+                        Participantes&nbsp;
                         <FaArrowRight onClick={this.siguienteComponente.bind(this)}/>
                     </button>
+                </div>
+                <div className='d-block p-1'>
+                    <h6 className="text-white bg-danger rounded d-inline m-2 p-1">Chat del GDA</h6>
                 </div>
                 {indice == 0?
                 <div className="container-fluid">
