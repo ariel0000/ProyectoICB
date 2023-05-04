@@ -1,6 +1,6 @@
 import React from 'react'
 
-class cerrarSesion extends React.Component{  //Submenú que sirve para preguntar si el usuario está seguro de cerrar sesión
+class CerrarSesion extends React.Component{  //Submenú que sirve para preguntar si el usuario está seguro de cerrar sesión
     constructor(){
         super(...arguments)
     }
@@ -31,4 +31,4 @@ class cerrarSesion extends React.Component{  //Submenú que sirve para preguntar
         )
     }
 }
-export default cerrarSesion
+export default CerrarSesion
