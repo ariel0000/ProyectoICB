@@ -39,15 +39,16 @@ const CrearNoticiaa = (props) => {
         let etiqueta = document.getElementById("errorField")
         etiqueta.innerHTML = "";
         consultarPorValidezToken(); //Si tira error 401 vuelve a '/'
-    //    this.borrarImagenAnterior() //Chequea el deleteUrl y borra la imagen en caso de ser  necesario
-        setVistaPrevia(true)
+
+    /*    borrarImagenAnterior() //Chequea el deleteUrl y borra la imagen en caso de ser  necesario
+        //** TODO : código en desuso - era para utilizar el API de imgBB
         let oldState = noticia;
         var formData = new FormData()
         formData.append('image', noticia.image);
         fetch('https://api.imgbb.com/1/upload?&key=2130771d0b2d02b719fc0734533ca7d5', {
             method: 'POST',
             body: formData
-        })
+        }) 
             .then(res => res.json())
             .then(json => {
                 let urlImagen = json.data.url
@@ -56,7 +57,28 @@ const CrearNoticiaa = (props) => {
             .catch(err => {
                 setNoticia({...oldState})  //Si hay error tengo que volver el estado al modo 'no VIsta Previa'
                 console.log("Error al cargar imagen: ", err.message);
+            }) */
+            
+            APIInvoker.invokeUploadImg(noticia.image,             
+            response => {
+                let urlImagen = "/img/"+response.body.fileName
+                setNoticia({...noticia, imagenUrl: urlImagen })
+                setVistaPrevia(true)
+            },
+            error=> {
+                if (error.status == 401){
+                    alert("Debe iniciar sesión para poder entrar aquí")
+                    window.localStorage.removeItem("token")
+                    window.localStorage.removeItem("codigo")
+                    window.location = ('/')
+                }
+                else if(error.status = 404){
+                    let etiqueta = document.getElementById("errorField")
+                    etiqueta.innerHtml = error.message
+                }
+                console.log('Error: '+error.message)
             })
+
     }
 
     const publicarNoticia = (e) => {
@@ -218,7 +240,7 @@ const CrearNoticiaa = (props) => {
                         </div>
                     </div>
                     <div className="row justify-content-center mb-1">
-                        <div className="col-md-7 col-9" >
+                        <div className="col-md-6 col-9" >
                             <img className="img-fluid rounded" alt="..." src={noticia.imagenUrl} />
                         </div>
                     </div>

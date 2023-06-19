@@ -126,7 +126,7 @@ class VerNoticias extends React.Component {
                             <FaArrowLeft />
                         </button>
                     </div>
-                    <div className="col-8 col-md-6 p-2">
+                    <div className="col-8 col-md-5 p-2">
                         <TransitionGroup>      
                                 {noticias[this.state.indiceNoticia]}
                         </TransitionGroup>
