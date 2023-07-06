@@ -257,7 +257,7 @@ class Menu extends React.Component{
                         enlace="/MainApp/eventos/1" />
                     {(rol > 1)?
                         <Submenu item="Crear Evento" active={this.state.salas} cerrarMenu={this.cerrarMenu.bind(this)} 
-                        enlace="/MainApp/infoSalas" />
+                        enlace="/MainApp/nuevoEvento" />
                     : <div></div>
                     }
                     </li>

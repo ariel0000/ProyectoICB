@@ -11,7 +11,7 @@ import CrearNoticiaa from "./CrearNoticiaa"
     
         useEffect(() => {
             APIInvoker.invokeGET('/icb-api/v1/eventos/'+[props.params.evento], response => {
-                let evento = {...response.body, fecha_de_exp: response.body.fecha, subtitulo: response.body.descripcion }
+                let evento = {...response.body, fecha_de_exp: response.body.fecha }
                 setEvento(evento)
             }, 
             error => {
@@ -39,12 +39,12 @@ import CrearNoticiaa from "./CrearNoticiaa"
             </blockquote>
             <Choose>
             <When condition={modoEdicion} >
-                <CrearNoticiaa tipo={"Evento"} titulo={evento.titulo} subtitulo={evento.subtitulo} imagenUrl={evento.url_imagen}
+                <CrearNoticiaa tipo={"Evento"} id={evento.id} titulo={evento.titulo} subtitulo={evento.subtitulo} imagenUrl={evento.url_imagen}
                 fechaExp = {evento.fecha_de_exp} deleteUrl= {evento.deleteUrl} piePagina = {evento.pie_de_pagina} />
             </When>
             <Otherwise>
                 <div className="row justify-content-center align-items-center m-1">
-                    <div className="col-10 col-md-6 p-2">
+                    <div className="col-10 col-md-5 p-2">
                         <Noticia noticia={evento} />
                     </div>
                     <div className="col-1">
@@ -55,7 +55,7 @@ import CrearNoticiaa from "./CrearNoticiaa"
                 </div>
                 <div className="row justify-content-center m-1">
                 {(rol > 2)?
-                    <div className="col-10 col-md-6 p-1">
+                    <div className="col-10 col-md-5 p-1">
                         <button className="btn btn-primary text-white d-inline p-1 m-1" onClick={cambiarModoEdicion}>
                             Editar
                         </button>

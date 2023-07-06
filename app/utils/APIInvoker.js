@@ -10,6 +10,13 @@ class APIInvoker {
         }
     }
 
+    getApiFileHeader() {
+        return {
+           // 'Content-Type': 'multipart/form-data',
+            authorization: 'Bearer '+window.localStorage.getItem("token"),
+        }
+    }
+
     invokeDELETE(url, okCallback, failCallback) {
         let params = {
             method: 'delete',
@@ -88,5 +95,32 @@ class APIInvoker {
                 }
             })
     }
+
+    invokeUpload(file, okCallback, failCallback) {
+        let formData = new FormData();
+    
+        formData.append("file", file);
+    
+        let params = {
+            method: 'POST',
+            body: formData,
+            headers: this.getApiFileHeader()
+        }
+        this.invoke('/icb-api/v1/uploads', okCallback, failCallback, params);
+      }
+    
+
+    invokeUploadImg(img, okCallback, failCallback) {
+        let formData = new FormData();
+    
+        formData.append("img", img);
+    
+        let params = {
+            method: 'POST',
+            body: formData,
+            headers: this.getApiFileHeader()
+        }
+        this.invoke('/icb-api/v1/uploads/img', okCallback, failCallback, params);
+      }
 }
 export default new APIInvoker();
