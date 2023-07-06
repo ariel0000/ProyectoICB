@@ -41,6 +41,7 @@ render((
                 <Route path="crearGda" component={CrearGDA} tab="crearGda" />
                 <Route path="nuevaNoticia" component={CrearNoticiaa} tab="crearNoticia" />
                 <Route path="noticias" component={VerNoticias} tab="Noticias" />
+                <Route path="nuevoEvento" component={CrearNoticiaa} tab="crearEvento" />
                 <Route path="verGDAs"  component={VerGDAs} tab="verGDAs" >
                     <Route path=":gda" component={VerGda} tab="verGDA" >
                         <Route path="addOne" component={(params) => <Modal><AgregarNuevaPersona {...params}/> </Modal>} tab="addOne" />
