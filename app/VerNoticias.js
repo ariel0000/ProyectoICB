@@ -53,7 +53,7 @@ class VerNoticias extends React.Component {
         }, 15000)
     }
 
-    VolverAnteriorNoticia(e) {
+    volverAnteriorNoticia(e) {
         console.log("Estoy en la funcion del interval")
         let newState
         let indiceActual = this.state.indiceNoticia
@@ -139,7 +139,7 @@ class VerNoticias extends React.Component {
                         <div className="row justify-content-center m-1">
                             <div className="col-auto align-self-center opacity-50 p-0">
                                 <button className="btn btn-dark text-info" style={{ opacity: "75%" }}
-                                    onClick={this.VolverAnteriorNoticia.bind(this)} >
+                                    onClick={this.volverAnteriorNoticia.bind(this)} >
                                     <FaArrowLeft />
                                 </button>
                             </div>

@@ -219,3 +219,8 @@ img.loading {
     white-space: -o-pre-wrap;               /* Opera 7 */
     white-space: pre-wrap;                  /* CSS3 */
 }
+
+/* Establecido el alto máximo para las imágenes que así lo necesiten (por ej: Img de Noticias y Eventos) */
+img.max-height{
+    max-height: 450px;
+}

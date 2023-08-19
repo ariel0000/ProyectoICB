@@ -323,7 +323,7 @@ class Toolbar extends React.Component {
                     <div className="me-auto p-1 bd-highlight order-1 order-sm-0 order-md-0 dropdown" >
                         <Choose>
                             <When condition={this.props.perfil != undefined}>  {/* Hay usuario logeado */}
-                            <label htmlFor={"notificador"} className="btn btn-white text-primary">
+                            <label htmlFor={"notificador"} className="p-0 m-1 btn btn-white text-primary">
                                 {this.state.letNotification ?
                                     <FaBell />
                                     :
@@ -332,7 +332,7 @@ class Toolbar extends React.Component {
                             </label>
                             <input href="#" className="d-none" accept=".gif, .jpg, .png, .bmp" type="button"
                             id={"notificador"} onClick={this.notify.bind(this)}></input>
-                            <button type="button" className="btn btn-white text-primary m-1 position-relative"
+                            <button type="button" className="p-0 btn btn-white text-primary m-1 position-relative"
                                 id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
                                  onClick={this.setearVisto.bind(this)}>
                                 <FaBars />
@@ -353,7 +353,7 @@ class Toolbar extends React.Component {
                                 </li>
                                 )}
                             </ul>
-                            <button type="button" className="btn btn-white text-primary m-1 position-relative"
+                            <button type="button" className="p-0 btn btn-white text-primary m-1 position-relative"
                                 id="homeButton" onClick={this.clickEnHome.bind(this)} >
                                 <FaHome />
                             </button>
