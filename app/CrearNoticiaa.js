@@ -13,7 +13,7 @@ const CrearNoticiaa = (props) => {
             preview: "",
             imagenUrl: props.imagenUrl,
             deleteUrl: props.deleteUrl,
-            piePagina: props.piePagina
+            piePagina: props.piePagina? props.piePagina : ""
         }
     }
     const [noticia, setNoticia] = useState(newObj)
@@ -31,6 +31,7 @@ const CrearNoticiaa = (props) => {
         // Hay que chequear si existe algún prop para saber si voy a editar y cargar los otros valores
         if(props.tipo){
             document.getElementById("fechaExp").value = props.fechaExp? props.fechaExp: ""
+            setFechaExpiracion(props.fechaExp? props.fechaExp: null)
             setNoticia({...noticia, preview: obtenerImagen(props.imagenUrl)}) // El props tipo me va a servir para discriminar entre uso desde otro componente y uso desde navegador browser history
             setEdicion(true)
             if(props.tipo == "Evento"){
